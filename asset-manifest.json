@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "/collab/static/css/main.5f361e03.chunk.css",
+    "main.js": "/collab/static/js/main.544c5242.chunk.js",
+    "main.js.map": "/collab/static/js/main.544c5242.chunk.js.map",
+    "runtime-main.js": "/collab/static/js/runtime-main.fe2c0636.js",
+    "runtime-main.js.map": "/collab/static/js/runtime-main.fe2c0636.js.map",
+    "static/js/2.76c658cb.chunk.js": "/collab/static/js/2.76c658cb.chunk.js",
+    "static/js/2.76c658cb.chunk.js.map": "/collab/static/js/2.76c658cb.chunk.js.map",
+    "index.html": "/collab/index.html",
+    "precache-manifest.e9d83b2ce635da33aaf8817713c277b3.js": "/collab/precache-manifest.e9d83b2ce635da33aaf8817713c277b3.js",
+    "service-worker.js": "/collab/service-worker.js",
+    "static/css/main.5f361e03.chunk.css.map": "/collab/static/css/main.5f361e03.chunk.css.map",
+    "static/js/2.76c658cb.chunk.js.LICENSE.txt": "/collab/static/js/2.76c658cb.chunk.js.LICENSE.txt",
+    "static/media/logo.svg": "/collab/static/media/logo.5d5d9eef.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.fe2c0636.js",
+    "static/js/2.76c658cb.chunk.js",
+    "static/css/main.5f361e03.chunk.css",
+    "static/js/main.544c5242.chunk.js"
+  ]
+}
