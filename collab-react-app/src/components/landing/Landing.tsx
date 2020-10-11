@@ -1,6 +1,7 @@
 import React from 'react';
 import Room from './Room';
 import RoomConnect from './RoomConnect';
+import PlayerList from './PlayerList';
 import '../../styles/Landing.css';
 
 async function Landing() {
@@ -28,6 +29,8 @@ async function Landing() {
       <Room />
       <hr style={{ "width": "100%" }} />
       <RoomConnect />
+      <hr style={{ "width": "100%" }} />
+      <PlayerList />
     </>
   );
 }

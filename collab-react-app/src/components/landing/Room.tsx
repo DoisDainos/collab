@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Button from 'react-bootstrap/Button'
-import '../../styles/Landing.css';
+import Button from 'react-bootstrap/Button';
+import { parseTextResponse } from '../../utils/serverUtils';
 
 function Room() {
   const [code, setCode] = useState('');
@@ -30,14 +30,9 @@ async function onGenerateClick(setCode: React.Dispatch<React.SetStateAction<stri
 
 async function generateRoomCode(): Promise<string> {
   const response = await fetch('./new-room');
-  if (response.body) {
-    const reader = response.body.getReader();
-    const result = await reader.read();
-    const decodedRoomCode = new TextDecoder('utf-8').decode(result.value)
-    console.log(decodedRoomCode);
-    return decodedRoomCode;
-  }
-  return '';
+  const roomCode = await parseTextResponse(response);
+  console.log(roomCode);
+  return roomCode;
 }
 
 export default Room;
