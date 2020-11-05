@@ -39,7 +39,7 @@ async function pingServer(): Promise<number> {
   const socket = new WebSocket('ws://localhost:8080');
 
   socket.addEventListener('open', event => {
-    socket.send('something');
+    socket.send(JSON.stringify({ type: "Room" }));
   });
 
   socket.addEventListener('message', event => {
