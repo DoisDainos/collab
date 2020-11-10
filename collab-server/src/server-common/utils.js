@@ -1,5 +1,5 @@
 module.exports = {
-  generateId: (length) => {
+  generateId: (length = 4) => {
     let result = '';
     const possibleChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
     const charLength = possibleChars.length;

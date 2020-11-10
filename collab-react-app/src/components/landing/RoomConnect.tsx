@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
+
+import { submitRoomCode } from '../../App';
 import { parseTextResponse } from '../../utils/serverUtils';
 
 function RoomConnect() {
@@ -27,7 +29,7 @@ function RoomConnect() {
       </p>
       <Button
         variant="primary"
-        onClick={ () => onCodeSubmit(code, setRoomResponse) }
+        onClick={ () => onCodeSubmit(code, name, setRoomResponse) }
       >
         Submit
       </Button>
@@ -38,15 +40,9 @@ function RoomConnect() {
   );
 }
 
-async function onCodeSubmit(code: string, dispatch: React.Dispatch<string>) {
-  const response = await fetch('./connect-room-code', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'text/plain'
-    },
-    body: code.toUpperCase()
-  });
-  dispatch(await parseTextResponse(response));
+async function onCodeSubmit(code: string, name: string, dispatch: React.Dispatch<string>) {
+  const response = await submitRoomCode(code, name);
+  dispatch(response);
 }
 
 export default RoomConnect;

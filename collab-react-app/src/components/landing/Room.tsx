@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
-import { parseTextResponse } from '../../utils/serverUtils';
+
+import { generateRoomCode } from '../../App';
 
 function Room() {
   const [code, setCode] = useState('');
@@ -24,15 +25,11 @@ function Room() {
 }
 
 async function onGenerateClick(setCode: React.Dispatch<React.SetStateAction<string>>) {
-  const code = await generateRoomCode();
+  let code = await generateRoomCode();
+  if (!code) {
+    code = 'ERROR'
+  }
   setCode(code);
-}
-
-async function generateRoomCode(): Promise<string> {
-  const response = await fetch('./new-room');
-  const roomCode = await parseTextResponse(response);
-  console.log(roomCode);
-  return roomCode;
 }
 
 export default Room;

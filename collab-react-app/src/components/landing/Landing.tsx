@@ -2,26 +2,29 @@ import React from 'react';
 import Room from './Room';
 import RoomConnect from './RoomConnect';
 import PlayerList from './PlayerList';
-import '../../styles/Landing.css';
+
+import { pingServer } from '../../App';
+
+// function processMessage(): boolean {
+//
+// }
+
+interface IServerResponse {
+  type: string;
+}
 
 async function Landing() {
-  const status = await pingServer();
-  switch (status) {
-    case 200:
-      console.log("Connect");
-      break;
-    case 400:
-    case 404:
-    case 500:
-    default:
-      return (
-        <div className="Landing-error">
-          <p>
-            Could not connect to server
-          </p>
-        </div>
-      )
+  const success = await pingServer();
+  if (!success) {
+    return (
+      <div className="Landing-error">
+        <p>
+          Could not connect to server
+        </p>
+      </div>
+    )
   }
+  console.log("Connect");
   return (
     <>
       Connected to server
@@ -33,19 +36,6 @@ async function Landing() {
       <PlayerList />
     </>
   );
-}
-
-async function pingServer(): Promise<number> {
-  const socket = new WebSocket('ws://localhost:8080');
-
-  socket.addEventListener('open', event => {
-    socket.send(JSON.stringify({ type: "Room" }));
-  });
-
-  socket.addEventListener('message', event => {
-    console.log(event.data);
-  });
-  return 0;
 }
 
 // async function pingServer(): Promise<number> {
