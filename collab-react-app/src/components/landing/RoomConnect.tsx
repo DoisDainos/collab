@@ -7,7 +7,7 @@ import { parseTextResponse } from '../../utils/serverUtils';
 function RoomConnect() {
   const [code, setCode] = useState('');
   const [name, setName] = useState('');
-  const [roomResponse, setRoomResponse] = useState('');
+  const [roomPlayers, setRoomPlayers] = useState<string[]>([]);
 
   return (
     <>
@@ -29,20 +29,38 @@ function RoomConnect() {
       </p>
       <Button
         variant="primary"
-        onClick={ () => onCodeSubmit(code, name, setRoomResponse) }
+        onClick={ () => {
+          onCodeSubmit(code, setRoomPlayers);
+          onPlayerSubmit(name, setRoomPlayers);
+        } }
       >
         Submit
       </Button>
-      <p>
-        { roomResponse }
-      </p>
+      {
+        roomPlayers.map(player => {
+          <p>
+            { player }
+          </p>
+        })
+      }
     </>
   );
 }
 
-async function onCodeSubmit(code: string, name: string, dispatch: React.Dispatch<string>) {
-  const response = await submitRoomCode(code, name);
-  dispatch(response);
+async function onCodeSubmit(code: string, dispatch: React.Dispatch<string[]>) {
+  const response = await submitRoomCode(code);
+  if (response.invalid) {
+    console.log("Invalid or nonexistent code");
+  }
+  dispatch(response.players);
+}
+
+async function onPlayerSubmit(name: string, dispatch: React.Dispatch<string[]>) {
+  // const response = await submitRoomCode(code);
+  // if (response.invalid) {
+  //   console.log("Invalid or nonexistent code");
+  // }
+  // dispatch(response.players);
 }
 
 export default RoomConnect;

@@ -37,35 +37,35 @@ export async function pingServer(): Promise<boolean> {
   });
 }
 
-export async function generateRoomCode(): Promise<string> {
-  return new Promise<string>((resolve, reject) => {
+export async function generateRoomCode(): Promise<{ code: string }> {
+  return new Promise<{ code: string }>((resolve, reject) => {
     socket.send(JSON.stringify({ type: 'NewRoom' }));
     listenForMessage('NewRoom', resolve);
   }).catch(e => {
     console.error(e);
-    return '';
+    return { code: '' };
   });
 }
 
-export async function submitRoomCode(code: string, player: string): Promise<string> {
-  return new Promise<string>((resolve, reject) => {
-    const content = { code: code, player: player };
+export async function submitRoomCode(code: string): Promise<{ players: string[], invalid?: boolean }> {
+  return new Promise<{ players: string[], invalid?: boolean }>((resolve, reject) => {
+    const content = { code: code };
     socket.send(JSON.stringify({ type: 'ConnectRoom', content: JSON.stringify(content) }));
     listenForMessage('ConnectRoom', resolve);
   }).catch(e => {
     console.error(e);
-    return '';
+    return { players: [], invalid: true };
   });
 }
 
-function listenForMessage(type: string, resolve: (data: string) => void) {
+function listenForMessage(type: string, resolve: (data: any) => void) {
   socket.addEventListener('message', event => {
     let data;
     if (event.data) {
       data = JSON.parse(event.data);
     }
     if (data && data.type === type && data.content) {
-      resolve(data.content as string);
+      resolve(data.content);
     }
   });
 }

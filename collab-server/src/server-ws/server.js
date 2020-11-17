@@ -4,7 +4,7 @@ const WebSocket = require('ws');
 const port = 8080;
 const wss = new WebSocket.Server({ port: 8080 });
 
-const playerMap = {};
+const roomPlayerMap = {};
 
 wss.on('connection', function connection(ws) {
   console.log(`Connected on port ${port}`)
@@ -32,15 +32,43 @@ wss.on('connection', function connection(ws) {
   });
 });
 
+// Generate ID and send it back to the client
 function handleNewRoom(ws) {
   console.log('New room');
-  const id = utils.generateId();
-  ws.send(JSON.stringify({ type: 'NewRoom', content: id }))
+  let code = utils.generateId();
+  while (roomPlayerMap[code]) {
+    code = utils.generateId();
+  }
+  if (code === utils.getLimitCode()) {
+    ws.send(JSON.stringify({ type: 'NewRoom', content: { limitReached: true }}));
+  } else {
+    roomPlayerMap[code] = [];
+    ws.send(JSON.stringify({ type: 'NewRoom', content: { code: code } }));
+  }
 }
 
+// Given a room code, send back all players in that room
+// If the room doesn't exist, send back invalid: true
 function handleConnectToRoom(ws, data) {
   console.log('Connect to room');
   const content = JSON.parse(data.content);
-  playerMap[content.player] = content.code;
-  console.log(playerMap);
+  if (!roomPlayerMap[content.code]) {
+    ws.send(JSON.stringify({ type: 'ConnectRoom', content: { players: [], invalid: true } }));
+    console.log("Invalid or nonexistent code: " + content.code);
+  } else {
+    ws.send(JSON.stringify({ type: 'ConnectRoom', content: { players: roomPlayerMap[content.code] } }));
+    console.log(roomPlayerMap[content.code]);
+  }
+}
+
+// Add to list of players for a given room code, send back new list
+// Handle all player rooms in memory for now
+function addPlayerToRoom(ws, data) {
+  console.log('Add player name to room');
+  const content = JSON.parse(data.content);
+  if (!roomPlayerMap[content.code] || roomPlayerMap[content.code].includes(content.player)) {
+    ws.send(JSON.stringify({ type: 'AddPlayer', content: { players: [], invalid: true } }));
+  } else {
+    ws.send(JSON.stringify({ type: 'AddPlayer', content: { players: roomPlayerMap[content.player] } }));
+  }
 }

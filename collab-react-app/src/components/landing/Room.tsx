@@ -25,9 +25,12 @@ function Room() {
 }
 
 async function onGenerateClick(setCode: React.Dispatch<React.SetStateAction<string>>) {
-  let code = await generateRoomCode();
-  if (!code) {
+  let response: { code: string } = await generateRoomCode();
+  let code: string;
+  if (!response || !response.code) {
     code = 'ERROR'
+  } else {
+    code = response.code;
   }
   setCode(code);
 }
