@@ -1,4 +1,5 @@
 import React from 'react';
+const WebSocket = require('ws');
 import Room from './Room';
 import RoomConnect from './RoomConnect';
 import PlayerList from './PlayerList';
@@ -36,6 +37,10 @@ async function Landing() {
 }
 
 async function pingServer(): Promise<number> {
+
+const ws = new WebSocket('ws://www.host.com/path', {
+  perMessageDeflate: false
+});
   const response = await fetch('./is-connected');
   return response.status;
 }
