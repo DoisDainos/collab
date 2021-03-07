@@ -3,26 +3,29 @@ const WebSocket = require('ws');
 import Room from './Room';
 import RoomConnect from './RoomConnect';
 import PlayerList from './PlayerList';
-import '../../styles/Landing.css';
+
+import { pingServer } from '../../App';
+
+// function processMessage(): boolean {
+//
+// }
+
+interface IServerResponse {
+  type: string;
+}
 
 async function Landing() {
-  const status = await pingServer();
-  switch (status) {
-    case 200:
-      console.log("Connect");
-      break;
-    case 400:
-    case 404:
-    case 500:
-    default:
-      return (
-        <div className="Landing-error">
-          <p>
-            Could not connect to server
-          </p>
-        </div>
-      )
+  const success = await pingServer();
+  if (!success) {
+    return (
+      <div className="Landing-error">
+        <p>
+          Could not connect to server
+        </p>
+      </div>
+    )
   }
+  console.log("Connect");
   return (
     <>
       Connected to server
