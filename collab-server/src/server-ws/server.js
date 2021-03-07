@@ -4,9 +4,10 @@ const WebSocket = require('ws');
 const port = 8080;
 const wss = new WebSocket.Server({ port: 8080 });
 
+// { [CODE]: [{ player: "", socket: ws }] }
 const roomPlayerMap = {};
 
-wss.on('connection', function connection(ws) {
+wss.on('connection', ws => {
   console.log(`Connected on port ${port}`)
   ws.on('message', function incoming(message) {
     try {
@@ -56,6 +57,7 @@ function handleConnectToRoom(ws, data) {
     ws.send(JSON.stringify({ type: 'ConnectRoom', content: { players: [], invalid: true } }));
     console.log("Invalid or nonexistent code: " + content.code);
   } else {
+    roomPlayerMap[content.code].push(content.player);
     ws.send(JSON.stringify({ type: 'ConnectRoom', content: { players: roomPlayerMap[content.code] } }));
     console.log(roomPlayerMap[content.code]);
   }
