@@ -58,6 +58,13 @@ export async function submitRoomCode(code: string, player: string): Promise<{ pl
   });
 }
 
+export async function listenForRoomConnections(): Promise<string[]> {
+  const message = await new Promise<{ players: any[] }>(resolve => {
+    listenForMessage('ConnectRoom', resolve);
+  });
+  return message.players;
+}
+
 function listenForMessage(type: string, resolve: (data: any) => void) {
   socket.addEventListener('message', event => {
     let data;

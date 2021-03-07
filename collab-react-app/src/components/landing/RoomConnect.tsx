@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 
-import { submitRoomCode } from '../../App';
+import { submitRoomCode, listenForRoomConnections } from '../../App';
 import { parseTextResponse } from '../../utils/serverUtils';
 
 function RoomConnect() {
@@ -52,6 +52,9 @@ async function onCodeSubmit(code: string, player: string, dispatch: React.Dispat
     console.log("Invalid or nonexistent code");
   }
   dispatch(response.players);
+  while (true) {
+    dispatch(await listenForRoomConnections());
+  }
 }
 
 export default RoomConnect;
