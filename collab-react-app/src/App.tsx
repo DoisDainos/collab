@@ -47,9 +47,9 @@ export async function generateRoomCode(): Promise<{ code: string }> {
   });
 }
 
-export async function submitRoomCode(code: string): Promise<{ players: string[], invalid?: boolean }> {
+export async function submitRoomCode(code: string, player: string): Promise<{ players: string[], invalid?: boolean }> {
   return new Promise<{ players: string[], invalid?: boolean }>((resolve, reject) => {
-    const content = { code: code };
+    const content = { code: code, player: player };
     socket.send(JSON.stringify({ type: 'ConnectRoom', content: JSON.stringify(content) }));
     listenForMessage('ConnectRoom', resolve);
   }).catch(e => {

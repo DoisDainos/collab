@@ -30,8 +30,7 @@ function RoomConnect() {
       <Button
         variant="primary"
         onClick={ () => {
-          onCodeSubmit(code, setRoomPlayers);
-          onPlayerSubmit(name, setRoomPlayers);
+          onCodeSubmit(code, name, setRoomPlayers);
         } }
       >
         Submit
@@ -47,20 +46,12 @@ function RoomConnect() {
   );
 }
 
-async function onCodeSubmit(code: string, dispatch: React.Dispatch<string[]>) {
-  const response = await submitRoomCode(code);
+async function onCodeSubmit(code: string, player: string, dispatch: React.Dispatch<string[]>) {
+  const response = await submitRoomCode(code, player);
   if (response.invalid) {
     console.log("Invalid or nonexistent code");
   }
   dispatch(response.players);
-}
-
-async function onPlayerSubmit(name: string, dispatch: React.Dispatch<string[]>) {
-  // const response = await submitRoomCode(code);
-  // if (response.invalid) {
-  //   console.log("Invalid or nonexistent code");
-  // }
-  // dispatch(response.players);
 }
 
 export default RoomConnect;
