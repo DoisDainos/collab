@@ -4,7 +4,7 @@ import './App.css';
 
 import { parseTextResponse } from './utils/serverUtils';
 
-const socket = new WebSocket('ws://localhost:8080');
+const socket = new WebSocket('ws://localhost:8081');
 
 function App() {
   const [landing, setLanding] = useState(<div></div>);

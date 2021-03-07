@@ -36,8 +36,8 @@ function RoomConnect() {
         Submit
       </Button>
       {
-        roomPlayers.map(player => {
-          <p>
+        roomPlayers.map((player, index) => {
+          return <p key={ index }>
             { player }
           </p>
         })

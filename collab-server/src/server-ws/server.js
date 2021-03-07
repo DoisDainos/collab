@@ -1,10 +1,10 @@
 const utils = require('../server-common/utils');
 const WebSocket = require('ws');
 
-const port = 8080;
-const wss = new WebSocket.Server({ port: 8080 });
+const port = 8081;
+const wss = new WebSocket.Server({ port: 8081 });
 
-// { [CODE]: [{ player: "", socket: ws }] }
+// { [CODE]: [{ playerName: "", socket: ws }] }
 const roomPlayerMap = {};
 
 wss.on('connection', ws => {
@@ -57,8 +57,17 @@ function handleConnectToRoom(ws, data) {
     ws.send(JSON.stringify({ type: 'ConnectRoom', content: { players: [], invalid: true } }));
     console.log("Invalid or nonexistent code: " + content.code);
   } else {
-    roomPlayerMap[content.code].push(content.player);
-    ws.send(JSON.stringify({ type: 'ConnectRoom', content: { players: roomPlayerMap[content.code] } }));
+    roomPlayerMap[content.code].push({ playerName: content.player, socket: ws });
+    const playerNames = [];
+    const sockets = [];
+    for (const player of roomPlayerMap[content.code]) {
+      playerNames.push(player.playerName);
+      sockets.push(player.socket);
+    }
+    for (const socket of sockets) {
+      console.log("socket; " + socket);
+      socket.send(JSON.stringify({ type: 'ConnectRoom', content: { players: playerNames } }));
+    }
     console.log(roomPlayerMap[content.code]);
   }
 }
