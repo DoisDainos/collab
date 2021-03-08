@@ -1,14 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { ReactReduxContext } from 'react-redux';
 
 function PlayerList() {
-  const [code, setCode] = useState('');
-
   return (
-    <>
-      <p>
-        Players
-      </p>
-    </>
+    <ReactReduxContext.Consumer>
+      {({ store }) => {
+        return (
+          <>
+            {
+              store.getState().room
+            }
+          </>
+        )
+      }}
+    </ReactReduxContext.Consumer>
   );
 }
 
