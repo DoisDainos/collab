@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Landing from "./components/landing/Landing";
 import Room from "./components/room/Room";
+import Game from "./components/game/Game";
 import "./App.css";
 
 const App = () => {
@@ -14,6 +15,9 @@ const App = () => {
           </Route>
           <Route exact path="/room">
             <Room />
+          </Route>
+          <Route exact path="/game">
+            <Game />
           </Route>
         </Switch>
       </Router>

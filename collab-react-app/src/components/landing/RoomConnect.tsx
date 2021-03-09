@@ -4,7 +4,7 @@ import Button from "react-bootstrap/Button";
 import { useHistory } from "react-router-dom";
 import Actions from "../../redux/actions/Actions";
 import { IStringAction, IStringArrayAction } from "../../interfaces/Interfaces";
-import { submitRoomCode, listenForRoomConnections } from "../../utils/serverUtils";
+import { submitRoomCode } from "../../utils/serverUtils";
 
 const RoomConnect = () => {
   const [code, setCode] = useState("");

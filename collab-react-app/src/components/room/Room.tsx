@@ -1,12 +1,14 @@
 import React, { useEffect } from "react";
 import { ReactReduxContext, useDispatch } from "react-redux";
-import { useLocation } from "react-router-dom"
+import { useHistory, useLocation } from "react-router-dom";
+import Button from "react-bootstrap/Button";
 import { listenForRoomConnections } from "../../utils/serverUtils";
 import PlayerList from "./PlayerList";
 import Actions from "../../redux/actions/Actions";
 
 function Room() {
   const dispatch = useDispatch();
+  const history = useHistory();
   const location = useLocation();
 
   useEffect(() => {
@@ -27,6 +29,14 @@ function Room() {
               Room: { store.getState().room }
             </p>
             <PlayerList />
+            <Button
+              variant="primary"
+              onClick={() => {
+                history.push("/game");
+              }}
+            >
+              Start game
+            </Button>
           </>
         );
       }}
