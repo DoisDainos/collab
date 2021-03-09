@@ -1,13 +1,24 @@
 import React, { useState, useEffect } from "react";
-import { ReactReduxContext } from "react-redux";
+import { ReactReduxContext, useDispatch, useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
+import Actions from "../../redux/actions/Actions";
+import { IPlayerState, ILine } from "../../interfaces/Interfaces";
+import { listenForDrawing, submitLines } from "../../utils/serverUtils";
 
 function Game() {
+	const dispatch = useDispatch();
+	const location = useLocation();
+	const lines = useSelector<IPlayerState>(state => state.canvasLines) as ILine[];
+	const roomCode = useSelector<IPlayerState>(state => state.room) as string;
+
 	const [strokeStyle, setStrokeStyle] = useState<string>("black");
 	const [lineWidth, setLineWidth] = useState<number>(2);
-	let prevX = 0;
-	let prevY = 0;
-	let currX = 0;
-	let currY = 0;
+	const line: ILine = {
+		startX: 0,
+		startY: 0,
+		endX: 0,
+		endY: 0
+	}
 	let flag = false;
 	let dotFlag = false;
 
@@ -30,6 +41,13 @@ function Game() {
 		canvas.addEventListener("mouseout", function (e) {
 				findxy("out", e)
 		}, false);
+
+		const waitForPlayers = async () => {
+      while (location.pathname === "/game") {
+        dispatch(Actions.addLines(await listenForDrawing()));
+      }
+    }
+    waitForPlayers();
   });
 
 	const color = (obj: HTMLDivElement) => {
@@ -42,30 +60,30 @@ function Game() {
 		}
 	}
 
-	const draw = () => {
+	const draw = (line: ILine) => {
 		ctx.beginPath();
-		ctx.moveTo(prevX, prevY);
-		ctx.lineTo(currX, currY);
+		ctx.moveTo(line.startX, line.startY);
+		ctx.lineTo(line.endX, line.endY);
 		ctx.strokeStyle = strokeStyle;
 		ctx.lineWidth = lineWidth;
 		ctx.stroke();
 		ctx.closePath();
 	}
 
-	const erase = () => {
-
-	}
-
-	const save = () => {
-
-	}
+	// const erase = () => {
+	//
+	// }
+	//
+	// const save = () => {
+	//
+	// }
 
 	const findxy = (res: string, e: MouseEvent) => {
 		if (res === "down") {
-			prevX = currX;
-			prevY = currY;
-			currX = e.clientX - canvas.offsetLeft;
-			currY = e.clientY - canvas.offsetTop;
+			line.startX = line.endX;
+			line.startY = line.endY;
+			line.endX = e.clientX - canvas.offsetLeft;
+			line.endY = e.clientY - canvas.offsetTop;
 
 			flag = true
 			dotFlag = true;
@@ -73,7 +91,7 @@ function Game() {
 			if (dotFlag) {
 					ctx.beginPath();
 					ctx.fillStyle = strokeStyle;
-					ctx.fillRect(currX, currY, 2, 2);
+					ctx.fillRect(line.endX, line.endY, 2, 2);
 					ctx.closePath();
 					dotFlag = false;
 			}
@@ -83,18 +101,26 @@ function Game() {
 		}
 		if (res === "move") {
 			if (flag) {
-				prevX = currX;
-				prevY = currY;
-				currX = e.clientX - canvas.offsetLeft;
-				currY = e.clientY - canvas.offsetTop;
-				draw();
+				line.startX = line.endX;
+				line.startY = line.endY;
+				line.endX = e.clientX - canvas.offsetLeft;
+				line.endY = e.clientY - canvas.offsetTop;
+				draw(line);
+				submitLines(roomCode, [ line ]);
 			}
+		}
+	}
+
+	const addLinesFromServer = () => {
+		for (const line of lines) {
+			draw(line);
 		}
 	}
 
 	return (
 		<ReactReduxContext.Consumer>
 			{({ store }) => {
+				addLinesFromServer();
 				return (
 					<>
 						<p>

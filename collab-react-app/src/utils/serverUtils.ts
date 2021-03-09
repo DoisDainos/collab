@@ -1,4 +1,5 @@
 const socket = new WebSocket("ws://localhost:8081");
+import { ILine } from "../interfaces/Interfaces";
 
 export async function parseTextResponse(response: Response): Promise<string> {
   if (response.body) {
@@ -41,11 +42,28 @@ export async function submitRoomCode(code: string, player: string): Promise<{ pl
 	});
 }
 
+export async function submitLines(code: string, lines: ILine[]): Promise<void> {
+	return new Promise<void>(resolve => {
+		const content = { code: code, lines: lines };
+		socket.send(JSON.stringify({ type: "Draw", content: JSON.stringify(content) }));
+    resolve();
+	}).catch(e => {
+		console.error(e);
+	});
+}
+
 export async function listenForRoomConnections(): Promise<string[]> {
-	const message = await new Promise<{ players: any[] }>(resolve => {
+	const message = await new Promise<{ players: string[] }>(resolve => {
 		listenForMessage("ConnectRoom", resolve);
 	});
 	return message.players;
+}
+
+export async function listenForDrawing(): Promise<ILine[]> {
+	const message = await new Promise<{ lines: ILine[] }>(resolve => {
+		listenForMessage("Draw", resolve);
+	});
+	return message.lines;
 }
 
 function listenForMessage(type: string, resolve: (data: any) => void) {

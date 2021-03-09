@@ -24,6 +24,9 @@ wss.on('connection', ws => {
           handleConnectToRoom(ws, data);
           break;
 
+        case 'Draw':
+          handleDraw(ws, data);
+
         default:
           console.log('Default message received');
       }
@@ -81,5 +84,13 @@ function addPlayerToRoom(ws, data) {
     ws.send(JSON.stringify({ type: 'AddPlayer', content: { players: [], invalid: true } }));
   } else {
     ws.send(JSON.stringify({ type: 'AddPlayer', content: { players: roomPlayerMap[content.player] } }));
+  }
+}
+
+function handleDraw(ws, data) {
+  console.log('Draw lines for all players in room');
+  const content = JSON.parse(data.content);
+  for (const player of roomPlayerMap[content.code]) {
+    player.socket.send(JSON.stringify({ type: 'Draw', content: { lines: content.lines } }))
   }
 }

@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import RoomConnect from "./RoomConnect";
 import Button from "react-bootstrap/Button";
 import { generateRoomCode } from "../../utils/serverUtils";
-import { pingServer } from "../../utils/serverUtils";
+// import { pingServer } from "../../utils/serverUtils";
 
 const Landing = () => {
   // const [failed, setFailure] = useState<boolean>(false);

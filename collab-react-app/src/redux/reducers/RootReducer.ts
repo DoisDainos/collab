@@ -1,11 +1,15 @@
-import { IPlayerState, IStringAction, IStringArrayAction } from "../../interfaces/Interfaces";
-import { SET_ROOM, ADD_PLAYER } from "../actions/ActionTypes";
+import * as Interfaces from "../../interfaces/Interfaces";
+import { SET_ROOM, ADD_PLAYER, ADD_LINES } from "../actions/ActionTypes";
 
-type IReducerFunction = (state: IPlayerState | undefined, action: IStringAction | IStringArrayAction) => IPlayerState;
+type IReducerFunction = (
+  state: Interfaces.IPlayerState | undefined,
+  action: Interfaces.IStringAction | Interfaces.IStringArrayAction | Interfaces.ILinesAction
+) => Interfaces.IPlayerState;
 
-const initialState: IPlayerState = {
+const initialState: Interfaces.IPlayerState = {
   room: "",
-  otherPlayers: []
+  otherPlayers: [],
+  canvasLines: []
 };
 
 const RootReducer: IReducerFunction = (state = initialState, action) => {
@@ -22,6 +26,12 @@ const RootReducer: IReducerFunction = (state = initialState, action) => {
 				...state,
 				otherPlayers: names
 			};
+    case ADD_LINES:
+      const lines = action.payload as Interfaces.ILine[];
+      return {
+        ...state,
+        canvasLines: [ ...state.canvasLines, ...lines ]
+      }
     default:
       return state;
   }
