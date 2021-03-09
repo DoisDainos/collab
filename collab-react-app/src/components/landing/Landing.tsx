@@ -30,7 +30,7 @@ const Landing = () => {
   return (
     <>
       Connected to server
-      <hr style={{ "width": "100%" }} />
+      <hr style={{ "width": "50%" }} />
       <RoomConnect />
       <Button
         variant="primary"

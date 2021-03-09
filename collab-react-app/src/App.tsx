@@ -7,18 +7,16 @@ import "./App.css";
 const App = () => {
   return (
     <div className="App">
-      <header className="App-header">
-        <Router>
-          <Switch>
-            <Route exact path="/">
-              <Landing />
-            </Route>
-            <Route exact path="/room">
-              <Room />
-            </Route>
-          </Switch>
-        </Router>
-      </header>
+      <Router>
+        <Switch>
+          <Route exact path="/">
+            <Landing />
+          </Route>
+          <Route exact path="/room">
+            <Room />
+          </Route>
+        </Switch>
+      </Router>
     </div>
   );
 }
