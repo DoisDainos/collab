@@ -10,11 +10,6 @@ const PlayerList = () => {
           <>
             <div>
               {
-                store.getState().room
-              }
-            </div>
-            <div>
-              {
                 store.getState().otherPlayers.map((name: string, index: number) => {
                   return <p key={ index }>{ name }</p>
                 })

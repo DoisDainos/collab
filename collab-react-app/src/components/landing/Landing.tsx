@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import Room from './Room';
-import RoomConnect from './RoomConnect';
-import PlayerList from './PlayerList';
-
-import { pingServer } from '../../utils/serverUtils';
+import React, { useState, useEffect } from "react";
+import RoomConnect from "./RoomConnect";
+import Button from "react-bootstrap/Button";
+import { generateRoomCode } from "../../utils/serverUtils";
+import { pingServer } from "../../utils/serverUtils";
 
 const Landing = () => {
   const [failed, setFailure] = useState<boolean>(false);
+  const [code, setCode] = useState("");
 
   useEffect(() => {
     const attemptConnection = async () => {
@@ -30,13 +30,29 @@ const Landing = () => {
     <>
       Connected to server
       <hr style={{ "width": "100%" }} />
-      <Room />
-      <hr style={{ "width": "100%" }} />
       <RoomConnect />
-      <hr style={{ "width": "100%" }} />
-      <PlayerList />
+      <Button
+        variant="primary"
+        onClick={ () => onGenerateClick(setCode) }
+      >
+        Generate room code
+      </Button>
+      <p>
+        Code: { code }
+      </p>
     </>
   );
+}
+
+async function onGenerateClick(setCode: React.Dispatch<React.SetStateAction<string>>) {
+  let response: { code: string } = await generateRoomCode();
+  let code: string;
+  if (!response || !response.code) {
+    code = "ERROR"
+  } else {
+    code = response.code;
+  }
+  setCode(code);
 }
 
 export default Landing;

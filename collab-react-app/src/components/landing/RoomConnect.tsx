@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
-import { ReactReduxContext } from 'react-redux';
-import Button from 'react-bootstrap/Button';
-import Actions from '../../redux/actions/Actions';
-import { IStringArrayAction } from '../../interfaces/Interfaces';
-import { submitRoomCode, listenForRoomConnections } from '../../utils/serverUtils';
+import React, { useState } from "react";
+import { ReactReduxContext } from "react-redux";
+import Button from "react-bootstrap/Button";
+import { useHistory } from "react-router-dom";
+import Actions from "../../redux/actions/Actions";
+import { IStringAction, IStringArrayAction } from "../../interfaces/Interfaces";
+import { submitRoomCode, listenForRoomConnections } from "../../utils/serverUtils";
 
 const RoomConnect = () => {
-  const [code, setCode] = useState('');
-  const [name, setName] = useState('');
+  const [code, setCode] = useState("");
+  const [name, setName] = useState("");
+  
+  const history = useHistory();
 
   return (
     <ReactReduxContext.Consumer>
@@ -33,19 +36,12 @@ const RoomConnect = () => {
             <Button
               variant="primary"
               onClick={() => {
-                store.dispatch(Actions.setRoom(code));
                 onCodeSubmit(code, name, store.dispatch);
+                history.push("/room");
               }}
             >
               Submit
             </Button>
-            {/* {
-              roomPlayers.map((player, index) => {
-                return <p key={index}>
-                  {player}
-                </p>
-              })
-            } */}
           </>
         )
       }}
@@ -53,7 +49,8 @@ const RoomConnect = () => {
   );
 }
 
-async function onCodeSubmit(code: string, player: string, dispatch: React.Dispatch<IStringArrayAction>) {
+async function onCodeSubmit(code: string, player: string, dispatch: React.Dispatch<IStringAction | IStringArrayAction>) {
+  dispatch(Actions.setRoom(code));
   const response = await submitRoomCode(code, player);
   if (response.invalid) {
     console.log("Invalid or nonexistent code");
