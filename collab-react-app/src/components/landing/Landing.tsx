@@ -5,26 +5,27 @@ import { generateRoomCode } from "../../utils/serverUtils";
 import { pingServer } from "../../utils/serverUtils";
 
 const Landing = () => {
-  const [failed, setFailure] = useState<boolean>(false);
+  // const [failed, setFailure] = useState<boolean>(false);
   const [code, setCode] = useState("");
 
-  useEffect(() => {
-    const attemptConnection = async () => {
-      const success = await pingServer();
-      setFailure(success);
-    }
-    attemptConnection();
-  }, []);
+  // TODO: this but before opening component and then redirect
+  // useEffect(() => {
+  //   const attemptConnection = async () => {
+  //     const success = await pingServer();
+  //     setFailure(success);
+  //   }
+  //   attemptConnection();
+  // }, []);
 
-  if (!failed) {
-    return (
-      <div className="Landing-error">
-        <p>
-          Could not connect to server
-        </p>
-      </div>
-    )
-  }
+  // if (!failed) {
+  //   return (
+  //     <div className="Landing-error">
+  //       <p>
+  //         Could not connect to server
+  //       </p>
+  //     </div>
+  //   )
+  // }
   console.log("Connected");
   return (
     <>

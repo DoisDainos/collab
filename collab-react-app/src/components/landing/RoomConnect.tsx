@@ -56,9 +56,6 @@ async function onCodeSubmit(code: string, player: string, dispatch: React.Dispat
     console.log("Invalid or nonexistent code");
   }
   dispatch(Actions.setPlayers(response.players));
-  while (true) {
-    dispatch(Actions.setPlayers(await listenForRoomConnections()));
-  }
 }
 
 export default RoomConnect;
