@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 
-import { generateRoomCode } from '../../App';
+import { generateRoomCode } from '../../utils/serverUtils';
 
 function Room() {
   const [code, setCode] = useState('');

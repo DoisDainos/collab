@@ -1,15 +1,25 @@
-import React from 'react';
-import { ReactReduxContext } from 'react-redux';
+import React from "react";
+import { ReactReduxContext } from "react-redux";
+import { connect } from "react-redux";
 
-function PlayerList() {
+const PlayerList = () => {
   return (
     <ReactReduxContext.Consumer>
       {({ store }) => {
         return (
           <>
-            {
-              store.getState().room
-            }
+            <div>
+              {
+                store.getState().room
+              }
+            </div>
+            <div>
+              {
+                store.getState().otherPlayers.map((name: string, index: number) => {
+                  return <p key={ index }>{ name }</p>
+                })
+              }
+            </div>
           </>
         )
       }}
@@ -17,4 +27,11 @@ function PlayerList() {
   );
 }
 
-export default PlayerList;
+const mapStateToProps = (state: any) => {
+  return {
+    room: state.room,
+    otherPlayers: state.otherPlayers
+  }
+}
+
+export default connect(mapStateToProps)(PlayerList);

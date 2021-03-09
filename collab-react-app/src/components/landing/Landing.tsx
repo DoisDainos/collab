@@ -1,23 +1,22 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Room from './Room';
 import RoomConnect from './RoomConnect';
 import PlayerList from './PlayerList';
 
-import { pingServer } from '../../App';
+import { pingServer } from '../../utils/serverUtils';
 
-const WebSocket = require('ws');
+const Landing = () => {
+  const [failed, setFailure] = useState<boolean>(false);
 
-// function processMessage(): boolean {
-//
-// }
+  useEffect(() => {
+    const attemptConnection = async () => {
+      const success = await pingServer();
+      setFailure(success);
+    }
+    attemptConnection();
+  }, []);
 
-interface IServerResponse {
-  type: string;
-}
-
-async function Landing() {
-  const success = await pingServer();
-  if (!success) {
+  if (!failed) {
     return (
       <div className="Landing-error">
         <p>
@@ -26,7 +25,7 @@ async function Landing() {
       </div>
     )
   }
-  console.log("Connect");
+  console.log("Connected");
   return (
     <>
       Connected to server

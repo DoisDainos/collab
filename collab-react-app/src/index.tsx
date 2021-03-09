@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import { createPlayerStore } from './datastore/StoreManager';
-import { Provider } from 'react-redux'
+import { createPlayerStore } from './redux/datastore/StoreManager';
+import { Provider } from 'react-redux';
 
 const store = createPlayerStore();
 

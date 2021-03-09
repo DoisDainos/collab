@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import { ReactReduxContext } from 'react-redux';
 import Button from 'react-bootstrap/Button';
+import Actions from '../../redux/actions/Actions';
+import { IStringArrayAction } from '../../interfaces/Interfaces';
+import { submitRoomCode, listenForRoomConnections } from '../../utils/serverUtils';
 
-import { submitRoomCode, listenForRoomConnections } from '../../App';
-import { parseTextResponse } from '../../utils/serverUtils';
-
-function RoomConnect() {
+const RoomConnect = () => {
   const [code, setCode] = useState('');
   const [name, setName] = useState('');
-  const [roomPlayers, setRoomPlayers] = useState<string[]>([]);
 
   return (
     <ReactReduxContext.Consumer>
@@ -19,33 +18,34 @@ function RoomConnect() {
               Connect to existing room
             </p>
             <input
-              value={ code }
+              value={code}
               placeholder="Enter room code"
-              onChange={ event => setCode(event.target.value) }
+              onChange={event => setCode(event.target.value)}
             />
             <input
-              value={ name }
+              value={name}
               placeholder="Enter player name"
-              onChange={ event => setName(event.target.value) }
+              onChange={event => setName(event.target.value)}
             />
             <p>
-              Code: { code }
+              Code: {code}
             </p>
             <Button
               variant="primary"
-              onClick={ () => {
-                onCodeSubmit(code, name, setRoomPlayers);
-              } }
+              onClick={() => {
+                store.dispatch(Actions.setRoom(code));
+                onCodeSubmit(code, name, store.dispatch);
+              }}
             >
               Submit
             </Button>
-            {
+            {/* {
               roomPlayers.map((player, index) => {
-                return <p key={ index }>
-                  { player }
+                return <p key={index}>
+                  {player}
                 </p>
               })
-            }
+            } */}
           </>
         )
       }}
@@ -53,14 +53,14 @@ function RoomConnect() {
   );
 }
 
-async function onCodeSubmit(code: string, player: string, dispatch: React.Dispatch<string[]>) {
+async function onCodeSubmit(code: string, player: string, dispatch: React.Dispatch<IStringArrayAction>) {
   const response = await submitRoomCode(code, player);
   if (response.invalid) {
     console.log("Invalid or nonexistent code");
   }
-  dispatch(response.players);
+  dispatch(Actions.setPlayers(response.players));
   while (true) {
-    dispatch(await listenForRoomConnections());
+    dispatch(Actions.setPlayers(await listenForRoomConnections()));
   }
 }
 
