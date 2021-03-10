@@ -1,24 +1,11 @@
-import React, { useEffect } from "react";
-import { ReactReduxContext, useDispatch } from "react-redux";
-import { useHistory, useLocation } from "react-router-dom";
+import React from "react";
+import { ReactReduxContext, connect } from "react-redux";
+import { useHistory } from "react-router-dom";
 import Button from "react-bootstrap/Button";
-import { listenForRoomConnections } from "../../utils/serverUtils";
 import PlayerList from "./PlayerList";
-import Actions from "../../redux/actions/Actions";
 
 function Room() {
-  const dispatch = useDispatch();
   const history = useHistory();
-  const location = useLocation();
-
-  useEffect(() => {
-    const waitForPlayers = async () => {
-      while (location.pathname === "/room") {
-        dispatch(Actions.setPlayers(await listenForRoomConnections()));
-      }
-    }
-    waitForPlayers();
-  });
 
   return (
     <ReactReduxContext.Consumer>
@@ -44,4 +31,10 @@ function Room() {
   );
 }
 
-export default Room;
+const mapStateToProps = (state: any) => {
+  return {
+    room: state.room
+  }
+}
+
+export default connect(mapStateToProps)(Room);

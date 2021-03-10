@@ -1,61 +1,58 @@
 import React, { useState } from "react";
-import { ReactReduxContext } from "react-redux";
+import { useDispatch } from "react-redux";
 import Button from "react-bootstrap/Button";
 import { useHistory } from "react-router-dom";
 import Actions from "../../redux/actions/Actions";
-import { IStringAction, IStringArrayAction } from "../../interfaces/Interfaces";
-import { submitRoomCode } from "../../utils/serverUtils";
+import { submitRoomCode, generateRoomCode } from "../../utils/serverUtils";
 
 const RoomConnect = () => {
+  const dispatch = useDispatch();
+
   const [code, setCode] = useState("");
   const [name, setName] = useState("");
   
   const history = useHistory();
 
   return (
-    <ReactReduxContext.Consumer>
-      {({ store }) => {
-        return (
-          <>
-            <p>
-              Connect to existing room
-            </p>
-            <input
-              value={code}
-              placeholder="Enter room code"
-              onChange={event => setCode(event.target.value)}
-            />
-            <input
-              value={name}
-              placeholder="Enter player name"
-              onChange={event => setName(event.target.value)}
-            />
-            <p>
-              Code: {code}
-            </p>
-            <Button
-              variant="primary"
-              onClick={() => {
-                onCodeSubmit(code, name, store.dispatch);
-                history.push("/room");
-              }}
-            >
-              Submit
-            </Button>
-          </>
-        )
-      }}
-    </ReactReduxContext.Consumer>
-  );
-}
-
-async function onCodeSubmit(code: string, player: string, dispatch: React.Dispatch<IStringAction | IStringArrayAction>) {
-  dispatch(Actions.setRoom(code));
-  const response = await submitRoomCode(code, player);
-  if (response.invalid) {
-    console.log("Invalid or nonexistent code");
-  }
-  dispatch(Actions.setPlayers(response.players));
+    <>
+      <input
+        value={name}
+        placeholder="Enter player name"
+        onChange={event => setName(event.target.value)}
+      />
+      <p>
+        Connect to existing room
+      </p>
+      <input
+        value={code}
+        placeholder="Enter room code"
+        onChange={event => setCode(event.target.value)}
+      />
+      <Button
+        variant="primary"
+        onClick={() => {
+          dispatch(Actions.setRoom(code));
+          submitRoomCode(code, name);
+          history.push("/room");
+        }}
+      >
+        Submit
+      </Button>
+      <p>
+        Create new room
+      </p>
+      <Button
+        variant="primary"
+        onClick={ () => {
+          generateRoomCode(name);
+          dispatch(Actions.setPlayers([ name ]));
+          history.push("/room");
+        }}
+      >
+        New Room
+      </Button>
+    </>
+  )
 }
 
 export default RoomConnect;

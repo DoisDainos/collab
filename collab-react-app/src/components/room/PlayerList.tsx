@@ -24,7 +24,6 @@ const PlayerList = () => {
 
 const mapStateToProps = (state: any) => {
   return {
-    room: state.room,
     otherPlayers: state.otherPlayers
   }
 }

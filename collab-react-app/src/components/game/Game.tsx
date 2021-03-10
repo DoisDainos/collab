@@ -3,7 +3,7 @@ import { ReactReduxContext, useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import Actions from "../../redux/actions/Actions";
 import { IPlayerState, ILine } from "../../interfaces/Interfaces";
-import { listenForDrawing, submitLines } from "../../utils/serverUtils";
+import { submitLines } from "../../utils/serverUtils";
 
 function Game() {
 	const dispatch = useDispatch();
@@ -41,13 +41,6 @@ function Game() {
 		canvas.addEventListener("mouseout", function (e) {
 				findxy("out", e)
 		}, false);
-
-		const waitForPlayers = async () => {
-      while (location.pathname === "/game") {
-        dispatch(Actions.addLines(await listenForDrawing()));
-      }
-    }
-    waitForPlayers();
   });
 
 	const color = (obj: HTMLDivElement) => {

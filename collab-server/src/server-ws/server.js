@@ -17,7 +17,7 @@ wss.on('connection', ws => {
       switch (data.type) {
 
         case 'NewRoom':
-          handleNewRoom(ws);
+          handleNewRoom(ws, data);
           break;
 
         case 'ConnectRoom':
@@ -37,8 +37,9 @@ wss.on('connection', ws => {
 });
 
 // Generate ID and send it back to the client
-function handleNewRoom(ws) {
+function handleNewRoom(ws, data) {
   console.log('New room');
+  const content = JSON.parse(data.content);
   let code = utils.generateId();
   while (roomPlayerMap[code]) {
     code = utils.generateId();
@@ -46,7 +47,7 @@ function handleNewRoom(ws) {
   if (code === utils.getLimitCode()) {
     ws.send(JSON.stringify({ type: 'NewRoom', content: { limitReached: true }}));
   } else {
-    roomPlayerMap[code] = [];
+    roomPlayerMap[code] = [{ playerName: content.player, socket: ws }];
     ws.send(JSON.stringify({ type: 'NewRoom', content: { code: code } }));
   }
 }
@@ -72,18 +73,6 @@ function handleConnectToRoom(ws, data) {
       socket.send(JSON.stringify({ type: 'ConnectRoom', content: { players: playerNames } }));
     }
     console.log(roomPlayerMap[content.code]);
-  }
-}
-
-// Add to list of players for a given room code, send back new list
-// Handle all player rooms in memory for now
-function addPlayerToRoom(ws, data) {
-  console.log('Add player name to room');
-  const content = JSON.parse(data.content);
-  if (!roomPlayerMap[content.code] || roomPlayerMap[content.code].includes(content.player)) {
-    ws.send(JSON.stringify({ type: 'AddPlayer', content: { players: [], invalid: true } }));
-  } else {
-    ws.send(JSON.stringify({ type: 'AddPlayer', content: { players: roomPlayerMap[content.player] } }));
   }
 }
 

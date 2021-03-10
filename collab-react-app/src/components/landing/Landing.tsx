@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
+import { ReactReduxContext } from "react-redux";
 import RoomConnect from "./RoomConnect";
-import Button from "react-bootstrap/Button";
-import { generateRoomCode } from "../../utils/serverUtils";
+import { useHistory } from "react-router-dom";
 // import { pingServer } from "../../utils/serverUtils";
 
 const Landing = () => {
+  const history = useHistory();
   // const [failed, setFailure] = useState<boolean>(false);
-  const [code, setCode] = useState("");
 
   // TODO: this but before opening component and then redirect
   // useEffect(() => {
@@ -28,32 +28,18 @@ const Landing = () => {
   // }
   console.log("Connected");
   return (
-    <>
-      Connected to server
-      <hr style={{ "width": "50%" }} />
-      <RoomConnect />
-      <Button
-        variant="primary"
-        onClick={ () => onGenerateClick(setCode) }
-      >
-        Generate room code
-      </Button>
-      <p>
-        Code: { code }
-      </p>
-    </>
+    <ReactReduxContext.Consumer>
+      {({ store }) => {
+        return (
+          <>
+            Connected to server
+            <hr style={{ "width": "50%" }} />
+            <RoomConnect />
+          </>
+        )
+      }}
+    </ReactReduxContext.Consumer>
   );
-}
-
-async function onGenerateClick(setCode: React.Dispatch<React.SetStateAction<string>>) {
-  let response: { code: string } = await generateRoomCode();
-  let code: string;
-  if (!response || !response.code) {
-    code = "ERROR"
-  } else {
-    code = response.code;
-  }
-  setCode(code);
 }
 
 export default Landing;

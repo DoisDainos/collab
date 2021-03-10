@@ -26,3 +26,8 @@ export interface ILine {
 	endX: number,
 	endY: number
 }
+
+export interface IServerMessage {
+	type: "NewRoom" | "ConnectRoom" | "Draw",
+	content: any
+}
