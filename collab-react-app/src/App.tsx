@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch, useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import Landing from "./components/landing/Landing";
 import Room from "./components/room/Room";
@@ -11,6 +11,7 @@ import { listenForMessage } from "./utils/serverUtils";
 
 const App = () => {
   const dispatch = useDispatch();
+  const history = useHistory();
 
   useEffect(() => {
     listenForMessage(handleServerMessage);
@@ -30,10 +31,12 @@ const App = () => {
       case "ConnectRoom":
         dispatch(Actions.setPlayers(message.content.players));
         break;
+      case "StartGame":
+        dispatch(Actions.setPlaying(true));
+        break;
       case "Draw":
         dispatch(Actions.addLines(message.content.lines));
         break;
-        // TODO: start game
       default:
         break;
     }

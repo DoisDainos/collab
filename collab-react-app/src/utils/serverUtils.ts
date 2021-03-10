@@ -1,5 +1,6 @@
-const socket = new WebSocket("ws://localhost:8081");
 import { ILine, IServerMessage } from "../interfaces/Interfaces";
+
+const socket = new WebSocket("ws://localhost:8081");
 
 export async function parseTextResponse(response: Response): Promise<string> {
 	if (response.body) {
@@ -29,6 +30,11 @@ export function generateRoomCode(name: string) {
 export function submitRoomCode(code: string, player: string) {
 	const content = { code: code, player: player };
 	socket.send(JSON.stringify({ type: "ConnectRoom", content: JSON.stringify(content) }));
+}
+
+export function startRoomGame(code: string) {
+	const content = { code: code };
+	socket.send(JSON.stringify({ type: "StartGame", content: JSON.stringify(content) }));
 }
 
 export function submitLines(code: string, lines: ILine[]) {

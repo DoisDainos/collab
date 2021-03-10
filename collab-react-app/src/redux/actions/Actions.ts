@@ -1,4 +1,4 @@
-import { SET_ROOM, ADD_PLAYER } from "./ActionTypes";
+import { SET_ROOM, ADD_PLAYER, SET_PLAYING, ADD_LINES } from "./ActionTypes";
 import { ILine } from "../../interfaces/Interfaces";
 
 const Actions = {
@@ -16,9 +16,16 @@ const Actions = {
     }
   },
 
+  setPlaying: (playing: boolean) => {
+    return {
+      type: SET_PLAYING,
+      payload: playing
+    }
+  },
+
   addLines: (lines: ILine[]) => {
     return {
-      type: ADD_PLAYER,
+      type: ADD_LINES,
       payload: lines
     }
   }

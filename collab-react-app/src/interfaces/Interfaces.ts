@@ -2,7 +2,8 @@ export interface IPlayerState {
 	room: string,
 	// name: string,
 	otherPlayers: string[],
-	canvasLines: ILine[]
+	canvasLines: ILine[],
+	playing: boolean
 }
 
 export interface IStringAction {
@@ -13,6 +14,11 @@ export interface IStringAction {
 export interface IStringArrayAction {
   type: string,
   payload: string[]
+}
+
+export interface IBooleanAction {
+	type: string,
+	payload: boolean
 }
 
 export interface ILinesAction {
@@ -28,6 +34,6 @@ export interface ILine {
 }
 
 export interface IServerMessage {
-	type: "NewRoom" | "ConnectRoom" | "Draw",
+	type: "NewRoom" | "ConnectRoom" | "StartGame" | "Draw",
 	content: any
 }

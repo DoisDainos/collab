@@ -1,15 +1,20 @@
 import React from "react";
 import { ReactReduxContext, connect } from "react-redux";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import PlayerList from "./PlayerList";
+import { startRoomGame } from "../../utils/serverUtils";
 
 function Room() {
   const history = useHistory();
+  const location = useLocation();
 
   return (
     <ReactReduxContext.Consumer>
       {({ store }) => {
+        if (location.pathname !== "game" && store.getState().playing) {
+          history.push("/game");
+        }
         return (
           <>
             <p>
@@ -19,7 +24,7 @@ function Room() {
             <Button
               variant="primary"
               onClick={() => {
-                history.push("/game");
+                startRoomGame(store.getState().room);
               }}
             >
               Start game
@@ -33,7 +38,8 @@ function Room() {
 
 const mapStateToProps = (state: any) => {
   return {
-    room: state.room
+    room: state.room,
+    playing: state.playing
   }
 }
 

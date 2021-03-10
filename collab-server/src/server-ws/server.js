@@ -24,8 +24,12 @@ wss.on('connection', ws => {
           handleConnectToRoom(ws, data);
           break;
 
+        case 'StartGame':
+          handleStartGame(data);
+          break;
+
         case 'Draw':
-          handleDraw(ws, data);
+          handleDraw(data);
 
         default:
           console.log('Default message received');
@@ -76,7 +80,16 @@ function handleConnectToRoom(ws, data) {
   }
 }
 
-function handleDraw(ws, data) {
+function handleStartGame(data) {
+  const content = JSON.parse(data.content);
+  console.log(`Game started for room: ${ content.code }`);
+  const players = roomPlayerMap[content.code];
+  for (const player of players) {
+    player.socket.send(JSON.stringify({ type: 'StartGame' }));
+  }
+}
+
+function handleDraw(data) {
   console.log('Draw lines for all players in room');
   const content = JSON.parse(data.content);
   for (const player of roomPlayerMap[content.code]) {
