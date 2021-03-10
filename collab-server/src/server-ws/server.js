@@ -30,7 +30,7 @@ wss.on('connection', ws => {
 
         case 'Draw':
           handleDraw(data);
-
+          break;
         default:
           console.log('Default message received');
       }

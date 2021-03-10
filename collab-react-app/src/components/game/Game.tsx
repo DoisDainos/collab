@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { ReactReduxContext, useDispatch, useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
-import Actions from "../../redux/actions/Actions";
+import { ReactReduxContext, useSelector } from "react-redux";
 import { IPlayerState, ILine } from "../../interfaces/Interfaces";
 import { submitLines } from "../../utils/serverUtils";
 
 function Game() {
-	const dispatch = useDispatch();
-	const location = useLocation();
 	const lines = useSelector<IPlayerState>(state => state.canvasLines) as ILine[];
 	const roomCode = useSelector<IPlayerState>(state => state.room) as string;
 
@@ -54,6 +50,12 @@ function Game() {
 	}
 
 	const draw = (line: ILine) => {
+		if (!ctx) {
+			if (!canvas) {
+				canvas = document.getElementById("can") as HTMLCanvasElement;
+			}
+			ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+		}
 		ctx.beginPath();
 		ctx.moveTo(line.startX, line.startY);
 		ctx.lineTo(line.endX, line.endY);
