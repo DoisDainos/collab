@@ -10,8 +10,15 @@ const PlayerList = () => {
           <>
             <div>
               {
-                store.getState().otherPlayers.map((name: string, index: number) => {
-                  return <p key={ index }>{ name }</p>
+                store.getState().name
+              }
+            </div>
+            <div>
+              {
+                store.getState().players.map((name: string, index: number) => {
+                  if (store.getState().name !== name) {
+                    return <p key={ index }>{ name }</p>
+                  }
                 })
               }
             </div>
@@ -24,7 +31,7 @@ const PlayerList = () => {
 
 const mapStateToProps = (state: any) => {
   return {
-    otherPlayers: state.otherPlayers
+    players: state.players
   }
 }
 

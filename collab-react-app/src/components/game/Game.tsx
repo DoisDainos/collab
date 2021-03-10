@@ -6,15 +6,18 @@ import { submitLines } from "../../utils/serverUtils";
 function Game() {
 	const lines = useSelector<IPlayerState>(state => state.canvasLines) as ILine[];
 	const roomCode = useSelector<IPlayerState>(state => state.room) as string;
+	const playerName = useSelector<IPlayerState>(state => state.name) as string;
 
-	const [strokeStyle, setStrokeStyle] = useState<string>("black");
-	const [lineWidth, setLineWidth] = useState<number>(2);
+	let strokeStyle = "black";
+	let lineWidth = 2;
 	const line: ILine = {
 		startX: 0,
 		startY: 0,
 		endX: 0,
 		endY: 0
 	}
+	let linesToSend: ILine[] = [];
+	let alreadySent = false; // If mouseUp, send straight away so this prevents the timer sending
 	let flag = false;
 	let dotFlag = false;
 
@@ -22,9 +25,7 @@ function Game() {
 	let ctx: CanvasRenderingContext2D;
 
 	useEffect(() => {
-    canvas = document.getElementById("can") as HTMLCanvasElement;
-		ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
-
+		canvas = document.getElementById("can") as HTMLCanvasElement;
 		canvas.addEventListener("mousemove", function (e) {
 				findxy("move", e)
 		}, false);
@@ -40,22 +41,17 @@ function Game() {
   });
 
 	const color = (obj: HTMLDivElement) => {
-		setStrokeStyle(obj.id);
+		strokeStyle = obj.id;
 		if (obj.id === "white") {
-			setLineWidth(14);
+			lineWidth = 14;
 		}
 		else {
-			setLineWidth(2);
+			lineWidth = 2;
 		}
 	}
 
 	const draw = (line: ILine) => {
-		if (!ctx) {
-			if (!canvas) {
-				canvas = document.getElementById("can") as HTMLCanvasElement;
-			}
-			ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
-		}
+		setCanvas();
 		ctx.beginPath();
 		ctx.moveTo(line.startX, line.startY);
 		ctx.lineTo(line.endX, line.endY);
@@ -74,7 +70,15 @@ function Game() {
 	// }
 
 	const findxy = (res: string, e: MouseEvent) => {
+		setCanvas();
 		if (res === "down") {
+			alreadySent = false;
+			setTimeout(() => {
+				if (!alreadySent) {
+					console.log(linesToSend);
+					submitLines(roomCode, playerName, linesToSend);
+				}
+			}, 1000);
 			line.startX = line.endX;
 			line.startY = line.endY;
 			line.endX = e.clientX - canvas.offsetLeft;
@@ -93,6 +97,10 @@ function Game() {
 		}
 		if (res === "up" || res === "out") {
 			flag = false;
+			if (!alreadySent) {
+				submitLines(roomCode, playerName, linesToSend);
+			}
+			alreadySent = true;
 		}
 		if (res === "move") {
 			if (flag) {
@@ -101,7 +109,7 @@ function Game() {
 				line.endX = e.clientX - canvas.offsetLeft;
 				line.endY = e.clientY - canvas.offsetTop;
 				draw(line);
-				submitLines(roomCode, [ line ]);
+				linesToSend.push(line);
 			}
 		}
 	}
@@ -109,6 +117,15 @@ function Game() {
 	const addLinesFromServer = () => {
 		for (const line of lines) {
 			draw(line);
+		}
+	}
+
+	const setCanvas = () => {
+		if (!ctx) {
+			if (!canvas) {
+				canvas = document.getElementById("can") as HTMLCanvasElement;
+			}
+			ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 		}
 	}
 

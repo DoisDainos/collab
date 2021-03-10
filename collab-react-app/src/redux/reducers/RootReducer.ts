@@ -1,6 +1,5 @@
 import * as Interfaces from "../../interfaces/Interfaces";
-import { SET_ROOM, ADD_PLAYER, SET_PLAYING, ADD_LINES } from "../actions/ActionTypes";
-import { Interface } from "readline";
+import * as ActionTypes from "../actions/ActionTypes";
 
 type IReducerFunction = (
   state: Interfaces.IPlayerState | undefined,
@@ -9,32 +8,39 @@ type IReducerFunction = (
 
 const initialState: Interfaces.IPlayerState = {
   room: "",
-  otherPlayers: [],
+  name: "",
+  players: [],
   canvasLines: [],
   playing: false
 };
 
 const RootReducer: IReducerFunction = (state = initialState, action) => {
   switch (action.type) {
-    case SET_ROOM:
+    case ActionTypes.SET_ROOM:
       const room = action.payload as string;
 			return {
 				...state,
 				room: room
 			};
-		case ADD_PLAYER:
+    case ActionTypes.SET_NAME:
+      const name = action.payload as string;
+			return {
+				...state,
+				name: name
+			};
+		case ActionTypes.ADD_PLAYER:
 			const names = action.payload as string[];
       return {
 				...state,
-				otherPlayers: names
+				players: names
 			};
-		case SET_PLAYING:
+		case ActionTypes.SET_PLAYING:
 			const playing = action.payload as boolean;
       return {
 				...state,
 				playing: playing
 			};
-    case ADD_LINES:
+    case ActionTypes.ADD_LINES:
       const lines = action.payload as Interfaces.ILine[];
       return {
         ...state,

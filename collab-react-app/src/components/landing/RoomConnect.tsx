@@ -31,6 +31,8 @@ const RoomConnect = () => {
       <Button
         variant="primary"
         onClick={() => {
+          dispatch(Actions.setPlayers([ name ]));
+          dispatch(Actions.setName(name));
           dispatch(Actions.setRoom(code));
           submitRoomCode(code, name);
           history.push("/room");
@@ -45,7 +47,7 @@ const RoomConnect = () => {
         variant="primary"
         onClick={ () => {
           generateRoomCode(name);
-          dispatch(Actions.setPlayers([ name ]));
+          dispatch(Actions.setName(name));
           history.push("/room");
         }}
       >

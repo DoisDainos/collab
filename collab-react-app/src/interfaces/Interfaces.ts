@@ -1,7 +1,7 @@
 export interface IPlayerState {
 	room: string,
-	// name: string,
-	otherPlayers: string[],
+	name: string,
+	players: string[],
 	canvasLines: ILine[],
 	playing: boolean
 }

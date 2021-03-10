@@ -93,6 +93,8 @@ function handleDraw(data) {
   console.log('Draw lines for all players in room');
   const content = JSON.parse(data.content);
   for (const player of roomPlayerMap[content.code]) {
-    player.socket.send(JSON.stringify({ type: 'Draw', content: { lines: content.lines } }))
+    if (player.playerName !== content.player) {
+      player.socket.send(JSON.stringify({ type: 'Draw', content: { lines: content.lines } }));
+    }
   }
 }
