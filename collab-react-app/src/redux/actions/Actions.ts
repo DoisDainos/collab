@@ -1,5 +1,5 @@
 import * as ActionTypes from "./ActionTypes";
-import { ILine } from "../../interfaces/Interfaces";
+import { ILine, ILineWithStyle } from "../../interfaces/Interfaces";
 
 const Actions = {
   setRoom: (room: string) => {
@@ -30,7 +30,7 @@ const Actions = {
     }
   },
 
-  addLines: (lines: ILine[]) => {
+  addLines: (lines: ILineWithStyle[]) => {
     return {
       type: ActionTypes.ADD_LINES,
       payload: lines

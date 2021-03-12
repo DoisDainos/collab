@@ -6,7 +6,7 @@ import Room from "./components/room/Room";
 import Game from "./components/game/Game";
 import Actions from "./redux/actions/Actions";
 import "./App.css";
-import { IServerMessage } from "./interfaces/Interfaces";
+import { IServerMessage, ILine, ILineWithStyle } from "./interfaces/Interfaces";
 import { listenForMessage } from "./utils/serverUtils";
 
 const App = () => {
@@ -35,7 +35,18 @@ const App = () => {
         dispatch(Actions.setPlaying(true));
         break;
       case "Draw":
-        dispatch(Actions.addLines(message.content.lines));
+        const linesWithStyle: ILineWithStyle[] = [];
+        for (const line of message.content.lines as ILine[]) {
+          linesWithStyle.push({
+            startX: line.startX,
+            startY: line.startY,
+            endX: line.endX,
+            endY: line.endY,
+            strokeStyle: message.content.strokeStyle as string,
+            lineWidth: message.content.lineWidth as number
+          })
+        }
+        dispatch(Actions.addLines(linesWithStyle));
         break;
       default:
         break;

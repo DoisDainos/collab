@@ -1,5 +1,6 @@
 import * as Interfaces from "../../interfaces/Interfaces";
 import * as ActionTypes from "../actions/ActionTypes";
+import { Interface } from "readline";
 
 type IReducerFunction = (
   state: Interfaces.IPlayerState | undefined,
@@ -41,7 +42,7 @@ const RootReducer: IReducerFunction = (state = initialState, action) => {
 				playing: playing
 			};
     case ActionTypes.ADD_LINES:
-      const lines = action.payload as Interfaces.ILine[];
+      const lines = action.payload as Interfaces.ILineWithStyle[];
       return {
         ...state,
         canvasLines: [ ...state.canvasLines, ...lines ]

@@ -94,7 +94,7 @@ function handleDraw(data) {
   const content = JSON.parse(data.content);
   for (const player of roomPlayerMap[content.code]) {
     if (player.playerName !== content.player) {
-      player.socket.send(JSON.stringify({ type: 'Draw', content: { lines: content.lines } }));
+      player.socket.send(JSON.stringify({ type: 'Draw', content: { lines: content.lines, strokeStyle: content.strokeStyle, lineWidth: content.lineWidth } }));
     }
   }
 }

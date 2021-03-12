@@ -2,7 +2,7 @@ export interface IPlayerState {
 	room: string,
 	name: string,
 	players: string[],
-	canvasLines: ILine[],
+	canvasLines: ILineWithStyle[],
 	playing: boolean
 }
 
@@ -31,6 +31,11 @@ export interface ILine {
 	startY: number,
 	endX: number,
 	endY: number
+}
+
+export interface ILineWithStyle extends ILine {
+	strokeStyle: string,
+	lineWidth: number
 }
 
 export interface IServerMessage {

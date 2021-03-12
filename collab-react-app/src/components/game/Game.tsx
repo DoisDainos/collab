@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { ReactReduxContext, useSelector } from "react-redux";
-import { IPlayerState, ILine } from "../../interfaces/Interfaces";
+import { IPlayerState, ILine, ILineWithStyle } from "../../interfaces/Interfaces";
 import { submitLines } from "../../utils/serverUtils";
 
 function Game() {
-	const lines = useSelector<IPlayerState>(state => state.canvasLines) as ILine[];
+	const lines = useSelector<IPlayerState>(state => state.canvasLines) as ILineWithStyle[];
 	const roomCode = useSelector<IPlayerState>(state => state.room) as string;
 	const playerName = useSelector<IPlayerState>(state => state.name) as string;
 
@@ -50,13 +50,21 @@ function Game() {
 		}
 	}
 
-	const draw = (line: ILine) => {
+	const draw = (line: ILine | ILineWithStyle) => {
 		setCanvas();
 		ctx.beginPath();
 		ctx.moveTo(line.startX, line.startY);
 		ctx.lineTo(line.endX, line.endY);
-		ctx.strokeStyle = strokeStyle;
-		ctx.lineWidth = lineWidth;
+		if ("strokeStyle" in line) {
+			ctx.strokeStyle = line.strokeStyle;
+		} else {
+			ctx.strokeStyle = strokeStyle;
+		}
+		if ("lineWidth" in line) {
+			ctx.lineWidth = line.lineWidth;
+		} else {
+			ctx.lineWidth = lineWidth;
+		}
 		ctx.stroke();
 		ctx.closePath();
 	}
@@ -76,7 +84,8 @@ function Game() {
 			setTimeout(() => {
 				if (!alreadySent) {
 					console.log(linesToSend);
-					submitLines(roomCode, playerName, linesToSend);
+					submitLines(roomCode, playerName, linesToSend, strokeStyle, lineWidth);
+					linesToSend = [];
 				}
 			}, 1000);
 			line.startX = line.endX;
@@ -98,7 +107,8 @@ function Game() {
 		if (res === "up" || res === "out") {
 			flag = false;
 			if (!alreadySent) {
-				submitLines(roomCode, playerName, linesToSend);
+				submitLines(roomCode, playerName, linesToSend, strokeStyle, lineWidth);
+				linesToSend = [];
 			}
 			alreadySent = true;
 		}
@@ -108,8 +118,8 @@ function Game() {
 				line.startY = line.endY;
 				line.endX = e.clientX - canvas.offsetLeft;
 				line.endY = e.clientY - canvas.offsetTop;
+				linesToSend.push(Object.assign({}, line));
 				draw(line);
-				linesToSend.push(line);
 			}
 		}
 	}

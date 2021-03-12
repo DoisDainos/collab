@@ -37,10 +37,9 @@ export function startRoomGame(code: string) {
 	socket.send(JSON.stringify({ type: "StartGame", content: JSON.stringify(content) }));
 }
 
-export function submitLines(code: string, player: string, lines: ILine[]) {
-	const content = { code: code, player: player, lines: lines };
+export function submitLines(code: string, player: string, lines: ILine[], strokeStyle: string, lineWidth: number) {
+	const content = { code: code, player: player, lines: lines, strokeStyle: strokeStyle, lineWidth: lineWidth };
 	socket.send(JSON.stringify({ type: "Draw", content: JSON.stringify(content) }));
-	lines = [];
 }
 
 export function listenForMessage(callback: (data: IServerMessage) => void) {
