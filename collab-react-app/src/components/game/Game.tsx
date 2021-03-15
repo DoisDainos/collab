@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { ReactReduxContext, useSelector } from "react-redux";
 import { IPlayerState, ILine, ILineWithStyle } from "../../interfaces/Interfaces";
 import { submitLines } from "../../utils/serverUtils";
@@ -95,7 +95,7 @@ function Game() {
 
 			flag = true
 			dotFlag = true;
-			// TODO: wut
+			// TODO: send this drawing to server
 			if (dotFlag) {
 					ctx.beginPath();
 					ctx.fillStyle = strokeStyle;
