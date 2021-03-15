@@ -4,8 +4,8 @@ const WebSocket = require('ws');
 const port = 8081;
 const wss = new WebSocket.Server({ port: 8081 });
 
-// { [CODE]: [{ playerName: "", socket: ws }] }
-const roomPlayerMap = {};
+// { [CODE]: { players: [{ name: "", socket: ws }], game: { lines: [] } } }
+const roomStateMap = {};
 
 wss.on('connection', ws => {
   console.log(`Connected on port ${port}`)
@@ -45,13 +45,16 @@ function handleNewRoom(ws, data) {
   console.log('New room');
   const content = JSON.parse(data.content);
   let code = utils.generateId();
-  while (roomPlayerMap[code]) {
+  while (roomStateMap[code]) {
     code = utils.generateId();
   }
   if (code === utils.getLimitCode()) {
     ws.send(JSON.stringify({ type: 'NewRoom', content: { limitReached: true }}));
   } else {
-    roomPlayerMap[code] = [{ playerName: content.player, socket: ws }];
+    roomStateMap[code] = {
+      players: [{ playerName: content.player, socket: ws } ],
+      game: {}
+    };
     ws.send(JSON.stringify({ type: 'NewRoom', content: { code: code } }));
   }
 }
@@ -61,29 +64,28 @@ function handleNewRoom(ws, data) {
 function handleConnectToRoom(ws, data) {
   console.log('Connect to room');
   const content = JSON.parse(data.content);
-  if (!roomPlayerMap[content.code]) {
+  if (!roomStateMap[content.code]) {
     ws.send(JSON.stringify({ type: 'ConnectRoom', content: { players: [], invalid: true } }));
     console.log("Invalid or nonexistent code: " + content.code);
   } else {
-    roomPlayerMap[content.code].push({ playerName: content.player, socket: ws });
+    roomStateMap[content.code].players.push({ playerName: content.player, socket: ws });
     const playerNames = [];
     const sockets = [];
-    for (const player of roomPlayerMap[content.code]) {
+    for (const player of roomStateMap[content.code].players) {
       playerNames.push(player.playerName);
       sockets.push(player.socket);
     }
     for (const socket of sockets) {
-      console.log("socket; " + socket);
       socket.send(JSON.stringify({ type: 'ConnectRoom', content: { players: playerNames } }));
     }
-    console.log(roomPlayerMap[content.code]);
+    console.log(roomStateMap[content.code].players);
   }
 }
 
 function handleStartGame(data) {
   const content = JSON.parse(data.content);
   console.log(`Game started for room: ${ content.code }`);
-  const players = roomPlayerMap[content.code];
+  const players = roomStateMap[content.code].players;
   for (const player of players) {
     player.socket.send(JSON.stringify({ type: 'StartGame' }));
   }
@@ -92,7 +94,11 @@ function handleStartGame(data) {
 function handleDraw(data) {
   console.log('Draw lines for all players in room');
   const content = JSON.parse(data.content);
-  for (const player of roomPlayerMap[content.code]) {
+  if (!roomStateMap[content.code].game.lines) {
+    roomStateMap[content.code].game.lines = [];
+  }
+  roomStateMap[content.code].game.lines.push(content.lines);
+  for (const player of roomStateMap[content.code].players) {
     if (player.playerName !== content.player) {
       player.socket.send(JSON.stringify({ type: 'Draw', content: { lines: content.lines, strokeStyle: content.strokeStyle, lineWidth: content.lineWidth } }));
     }
