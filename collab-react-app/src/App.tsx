@@ -30,7 +30,7 @@ const App = () => {
     }
     attemptConnection();
   }, []);
-  
+
   const handleServerMessage = (message: IServerMessage) => {
     switch (message.type) {
       case "NewRoom":
@@ -40,13 +40,16 @@ const App = () => {
         } else {
           code = message.content.code;
         }
-        dispatch(Actions.setRoom(message.content.code));
+        dispatch(Actions.setRoom(code));
         break;
       case "ConnectRoom":
         dispatch(Actions.setPlayers(message.content.players));
         break;
       case "StartGame":
         dispatch(Actions.setPlaying(true));
+        break;
+      case "GetRole":
+        dispatch(Actions.setRole(message.content.role));
         break;
       case "Draw":
         const linesWithStyle: ILineWithStyle[] = [];

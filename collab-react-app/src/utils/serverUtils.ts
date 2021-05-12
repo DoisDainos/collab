@@ -1,4 +1,4 @@
-import { ILine, IServerMessage } from "../interfaces/Interfaces";
+import { ILine, IPlayerRole, IServerMessage } from "../interfaces/Interfaces";
 
 const socket = new WebSocket("ws://localhost:8081");
 
@@ -40,6 +40,11 @@ export function startRoomGame(code: string) {
 export function submitLines(code: string, player: string, lines: ILine[], strokeStyle: string, lineWidth: number) {
 	const content = { code: code, player: player, lines: lines, strokeStyle: strokeStyle, lineWidth: lineWidth };
 	socket.send(JSON.stringify({ type: "Draw", content: JSON.stringify(content) }));
+}
+
+export function getRole(code: string, player: string, possibleRoles: IPlayerRole[]) {
+	const content = { code: code, playerName: player, possibleRoles: possibleRoles };
+	socket.send(JSON.stringify({ type: "GetRole", content: JSON.stringify(content) }));
 }
 
 export function listenForMessage(callback: (data: IServerMessage) => void) {

@@ -1,5 +1,5 @@
 import * as ActionTypes from "./ActionTypes";
-import { ILine, ILineWithStyle } from "../../interfaces/Interfaces";
+import { ILineWithStyle, IPlayerRole } from "../../interfaces/Interfaces";
 
 const Actions = {
   setRoom: (room: string) => {
@@ -20,6 +20,20 @@ const Actions = {
     return {
       type: ActionTypes.ADD_PLAYER,
       payload: names
+    }
+  },
+
+  setPossibleRoles: (roles: IPlayerRole[]) => {
+    return {
+      type: ActionTypes.SET_POSSIBLE_ROLES,
+      payload: roles
+    }
+  },
+
+  setRole: (role: string) => {
+    return {
+      type: ActionTypes.SET_ROLE,
+      payload: role
     }
   },
 

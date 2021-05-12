@@ -1,12 +1,30 @@
 import React, { useEffect } from "react";
 import { ReactReduxContext, useSelector } from "react-redux";
-import { IPlayerState, ILine, ILineWithStyle } from "../../interfaces/Interfaces";
-import { submitLines } from "../../utils/serverUtils";
+import { IPlayerState, IPlayerRole, ILine, ILineWithStyle } from "../../interfaces/Interfaces";
+import { getRole, submitLines } from "../../utils/serverUtils";
+import Actions from "../../redux/actions/Actions";
+import { useDispatch } from "react-redux";
+
+const ROUNDS = 6;
+
+const DEFAULT_ROLE = "Friend";
+
+const EXTRA_ROLES: IPlayerRole[] = [
+  {
+    roleName: "Spy",
+    roleCount: 1
+  }
+]
 
 function Game() {
+	const dispatch = useDispatch();
+
 	const lines = useSelector<IPlayerState>(state => state.canvasLines) as ILineWithStyle[];
 	const roomCode = useSelector<IPlayerState>(state => state.room) as string;
 	const playerName = useSelector<IPlayerState>(state => state.name) as string;
+	const possibleRoles = useSelector<IPlayerState>(state => state.possibleRoles) as IPlayerRole[];
+	const players = useSelector<IPlayerState>(state => state.players) as string[];
+	useSelector<IPlayerState>(state => state.role) as string;
 
 	let strokeStyle = "black";
 	let lineWidth = 2;
@@ -25,19 +43,36 @@ function Game() {
 	let ctx: CanvasRenderingContext2D;
 
 	useEffect(() => {
+		if (possibleRoles.length === 0) {
+			const playerCount = players.length;
+			let totalExtraRoles = 0;
+			for (const role of EXTRA_ROLES) {
+				totalExtraRoles += role.roleCount;
+			}
+			const defaultRole: IPlayerRole = {
+				roleName: DEFAULT_ROLE,
+				roleCount: playerCount - totalExtraRoles
+			}
+			const allRoles = EXTRA_ROLES.concat(defaultRole);
+			dispatch(Actions.setPossibleRoles(allRoles));
+			getRole(roomCode, playerName, allRoles);
+		}
+
 		canvas = document.getElementById("can") as HTMLCanvasElement;
-		canvas.addEventListener("mousemove", function (e) {
-				findxy("move", e)
-		}, false);
-		canvas.addEventListener("mousedown", function (e) {
-				findxy("down", e)
-		}, false);
-		canvas.addEventListener("mouseup", function (e) {
-				findxy("up", e)
-		}, false);
-		canvas.addEventListener("mouseout", function (e) {
-				findxy("out", e)
-		}, false);
+		if (canvas) {
+			canvas.addEventListener("mousemove", function (e) {
+					findxy("move", e)
+			}, false);
+			canvas.addEventListener("mousedown", function (e) {
+					findxy("down", e)
+			}, false);
+			canvas.addEventListener("mouseup", function (e) {
+					findxy("up", e)
+			}, false);
+			canvas.addEventListener("mouseout", function (e) {
+					findxy("out", e)
+			}, false);
+		}
   });
 
 	const color = (obj: HTMLDivElement) => {
@@ -148,19 +183,29 @@ function Game() {
 						<p>
 							Room: {store.getState().room}
 						</p>
-						<canvas id="can" width="400" height="400" style={{ position: "absolute", top: "10%", left: "10%", border: "2px solid" }}></canvas>
-						<div onClick={ e => color(e.target as HTMLDivElement) } style={{ position: "absolute", top: "12%", left: "43%" }}>Choose Color</div>
-						<div onClick={ e => color(e.target as HTMLDivElement) } style={{ position: "absolute", top: "15%", left: "45%", width: "10px", height: "10px", background: "green" }} id="green"></div>
-						<div onClick={ e => color(e.target as HTMLDivElement) } style={{ position: "absolute", top: "15%", left: "46%", width: "10px", height: "10px", background: "blue" }} id="blue"></div>
-						<div onClick={ e => color(e.target as HTMLDivElement) } style={{ position: "absolute", top: "15%", left: "47%", width: "10px", height: "10px", background: "red" }} id="red"></div>
-						<div onClick={ e => color(e.target as HTMLDivElement) } style={{ position: "absolute", top: "17%", left: "45%", width: "10px", height: "10px", background: "yellow" }} id="yellow"></div>
-						<div onClick={ e => color(e.target as HTMLDivElement) } style={{ position: "absolute", top: "17%", left: "46%", width: "10px", height: "10px", background: "orange" }} id="orange"></div>
-						<div onClick={ e => color(e.target as HTMLDivElement) } style={{ position: "absolute", top: "17%", left: "47%", width: "10px", height: "10px", background: "black" }} id="black"></div>
-						<div onClick={ e => color(e.target as HTMLDivElement) } style={{ position: "absolute", top: "22%", left: "45%", width: "15px", height: "15px", background: "white", border: "2px solid" }} id="white"></div>
-						<div style={{ position: "absolute", top: "20%", left: "43%" }}>Eraser</div>
-						<img id="canvasimg" style={{ position: "absolute", top: "10%", left: "52%" }} />
-						<input type="button" value="save" id="btn" size={30} style={{ position: "absolute", top: "55%", left: "10%" }} />
-						<input type="button" value="clear" id="clr" size={23} style={{ position: "absolute", top: "55%", left: "15%" }} />
+						{
+							!!store.getState().role ?
+								<>
+									<div>Role: {store.getState().role}</div>
+									<canvas id="can" width="400" height="400" style={{ position: "absolute", top: "10%", left: "10%", border: "2px solid" }}></canvas>
+									<div onClick={ e => color(e.target as HTMLDivElement) } style={{ position: "absolute", top: "12%", left: "43%" }}>Choose Color</div>
+									<div onClick={ e => color(e.target as HTMLDivElement) } style={{ position: "absolute", top: "15%", left: "45%", width: "10px", height: "10px", background: "green" }} id="green"></div>
+									<div onClick={ e => color(e.target as HTMLDivElement) } style={{ position: "absolute", top: "15%", left: "46%", width: "10px", height: "10px", background: "blue" }} id="blue"></div>
+									<div onClick={ e => color(e.target as HTMLDivElement) } style={{ position: "absolute", top: "15%", left: "47%", width: "10px", height: "10px", background: "red" }} id="red"></div>
+									<div onClick={ e => color(e.target as HTMLDivElement) } style={{ position: "absolute", top: "17%", left: "45%", width: "10px", height: "10px", background: "yellow" }} id="yellow"></div>
+									<div onClick={ e => color(e.target as HTMLDivElement) } style={{ position: "absolute", top: "17%", left: "46%", width: "10px", height: "10px", background: "orange" }} id="orange"></div>
+									<div onClick={ e => color(e.target as HTMLDivElement) } style={{ position: "absolute", top: "17%", left: "47%", width: "10px", height: "10px", background: "black" }} id="black"></div>
+									<div onClick={ e => color(e.target as HTMLDivElement) } style={{ position: "absolute", top: "22%", left: "45%", width: "15px", height: "15px", background: "white", border: "2px solid" }} id="white"></div>
+									<div style={{ position: "absolute", top: "20%", left: "43%" }}>Eraser</div>
+									<img id="canvasimg" style={{ position: "absolute", top: "10%", left: "52%" }} />
+									<input type="button" value="save" id="btn" size={30} style={{ position: "absolute", top: "55%", left: "10%" }} />
+									<input type="button" value="clear" id="clr" size={23} style={{ position: "absolute", top: "55%", left: "15%" }} />
+								</>
+							:
+								<div>
+									Assigning roles...
+								</div>
+						}
 					</>
 				);
 			}}

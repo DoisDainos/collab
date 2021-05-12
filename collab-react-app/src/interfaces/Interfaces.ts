@@ -3,7 +3,14 @@ export interface IPlayerState {
 	name: string,
 	players: string[],
 	canvasLines: ILineWithStyle[],
-	playing: boolean
+	playing: boolean,
+	role: string,
+	possibleRoles: IPlayerRole[]
+}
+
+export interface IPlayerRole {
+	roleName: string,
+	roleCount: number
 }
 
 export interface IStringAction {
@@ -26,6 +33,11 @@ export interface ILinesAction {
 	payload: ILine[]
 }
 
+export interface IRolesAction {
+	type: string,
+	payload: IPlayerRole[]
+}
+
 export interface ILine {
 	startX: number,
 	startY: number,
@@ -39,6 +51,6 @@ export interface ILineWithStyle extends ILine {
 }
 
 export interface IServerMessage {
-	type: "NewRoom" | "ConnectRoom" | "StartGame" | "Draw",
+	type: "NewRoom" | "ConnectRoom" | "StartGame" | "GetRole" | "Draw",
 	content: any
 }

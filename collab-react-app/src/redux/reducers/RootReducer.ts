@@ -1,10 +1,9 @@
 import * as Interfaces from "../../interfaces/Interfaces";
 import * as ActionTypes from "../actions/ActionTypes";
-import { Interface } from "readline";
 
 type IReducerFunction = (
   state: Interfaces.IPlayerState | undefined,
-  action: Interfaces.IStringAction | Interfaces.IStringArrayAction | Interfaces.IBooleanAction | Interfaces.ILinesAction
+  action: Interfaces.IStringAction | Interfaces.IStringArrayAction | Interfaces.IBooleanAction | Interfaces.ILinesAction | Interfaces.IRolesAction
 ) => Interfaces.IPlayerState;
 
 const initialState: Interfaces.IPlayerState = {
@@ -12,7 +11,9 @@ const initialState: Interfaces.IPlayerState = {
   name: "",
   players: [],
   canvasLines: [],
-  playing: false
+  playing: false,
+  role: "",
+  possibleRoles: []
 };
 
 const RootReducer: IReducerFunction = (state = initialState, action) => {
@@ -34,6 +35,18 @@ const RootReducer: IReducerFunction = (state = initialState, action) => {
       return {
 				...state,
 				players: names
+			};
+    case ActionTypes.SET_POSSIBLE_ROLES:
+			const roles = action.payload as Interfaces.IPlayerRole[];
+      return {
+				...state,
+				possibleRoles: roles
+			};
+    case ActionTypes.SET_ROLE:
+			const role = action.payload as string;
+      return {
+				...state,
+				role: role
 			};
 		case ActionTypes.SET_PLAYING:
 			const playing = action.payload as boolean;

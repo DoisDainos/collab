@@ -1,3 +1,15 @@
+# Starting the app locally
+
+In folder collab-react-app:
+- npm install
+- npm start
+
+In folder collab-server
+- npm install
+- node src/server-ws/server.js
+
+Visit localhost:3000
+
 # collab-react-app
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
