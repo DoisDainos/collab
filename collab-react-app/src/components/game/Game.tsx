@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { ReactReduxContext, useSelector } from "react-redux";
-import { IPlayerRole, IPlayerState, IPlayerPositionMap } from "../../interfaces/Interfaces";
-import { getPlayerOrder, getRole } from "../../utils/serverUtils";
+import { IPlayerRole, IPlayerState } from "../../interfaces/Interfaces";
+import { endTurn, getFirstPlayer, getRole } from "../../utils/serverUtils";
 import Actions from "../../redux/actions/Actions";
 import { useDispatch } from "react-redux";
 import Canvas from "../canvas/Canvas";
@@ -23,10 +23,9 @@ function Game() {
 	const roomCode = useSelector<IPlayerState>(state => state.room) as string;
 	const playerName = useSelector<IPlayerState>(state => state.name) as string;
 	const possibleRoles = useSelector<IPlayerState>(state => state.possibleRoles) as IPlayerRole[];
-	const players = useSelector<IPlayerState>(state => state.players) as IPlayerPositionMap;
+	const players = useSelector<IPlayerState>(state => state.players) as string[];
+	const activePlayer = useSelector<IPlayerState>(state => state.activePlayer) as string;
 	useSelector<IPlayerState>(state => state.role) as string;
-
-  let activePosition = 0;
 
 	useEffect(() => {
 		if (possibleRoles.length === 0) {
@@ -42,13 +41,17 @@ function Game() {
 			const allRoles = EXTRA_ROLES.concat(defaultRole);
 			dispatch(Actions.setPossibleRoles(allRoles));
 			getRole(roomCode, playerName, allRoles);
-      getPlayerOrder(roomCode);
+      getFirstPlayer(roomCode);
 		}
   });
 
   const isActivePlayer = () => {
-    return players[playerName] === activePosition;
+    return playerName === activePlayer;
   }
+
+	const onEndStroke = () => {
+		endTurn(roomCode);
+	}
 
 	return (
 		<ReactReduxContext.Consumer>
@@ -71,6 +74,7 @@ function Game() {
 									<Canvas
                     canDraw={isActivePlayer()}
                     showPalette={true}
+										onEndStroke={() => onEndStroke()}
                   />
 								</>
 							:

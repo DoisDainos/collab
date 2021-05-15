@@ -47,9 +47,14 @@ export function getRole(code: string, player: string, possibleRoles: IPlayerRole
 	socket.send(JSON.stringify({ type: "GetRole", content: JSON.stringify(content) }));
 }
 
-export function getPlayerOrder(code: string) {
+export function getFirstPlayer(code: string) {
 	const content = { code: code };
-	socket.send(JSON.stringify({ type: "GetPlayerOrder", content: JSON.stringify(content) }));
+	socket.send(JSON.stringify({ type: "GetFirstPlayer", content: JSON.stringify(content) }));
+}
+
+export function endTurn(code: string) {
+	const content = { code: code };
+	socket.send(JSON.stringify({ type: "EndTurn", content: JSON.stringify(content) }));
 }
 
 export function listenForMessage(callback: (data: IServerMessage) => void) {

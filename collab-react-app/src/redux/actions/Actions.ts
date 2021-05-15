@@ -1,5 +1,5 @@
 import * as ActionTypes from "./ActionTypes";
-import { ILineWithStyle, IPlayerPositionMap, IPlayerRole } from "../../interfaces/Interfaces";
+import { ILineWithStyle, IPlayerRole } from "../../interfaces/Interfaces";
 
 const Actions = {
   setRoom: (room: string) => {
@@ -51,10 +51,10 @@ const Actions = {
     }
   },
 
-  setPlayerOrder: (playerPositionMap: IPlayerPositionMap) => {
+  setActivePlayer: (currentPlayerPosition: number) => {
     return {
-      type: ActionTypes.SET_PLAYER_ORDER,
-      payload: playerPositionMap
+      type: ActionTypes.SET_ACTIVE_PLAYER,
+      payload: currentPlayerPosition
     }
   }
 }

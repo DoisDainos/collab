@@ -7,7 +7,9 @@ export interface IPlayerState {
 	// Player name
 	name: string,
 	// All players with positions to dictate order of play
-	players: IPlayerPositionMap,
+	players: string[],
+	// Player whose turn it is
+	activePlayer: string,
 	// State of lines on the canvas to draw
 	canvasLines: ILineWithStyle[],
 	// Is the game being played
@@ -16,13 +18,6 @@ export interface IPlayerState {
 	role: string,
 	// All possible roles with counts
 	possibleRoles: IPlayerRole[],
-}
-
-/**
- * Mapping of player names to position, default position is -1.
- */
-export interface IPlayerPositionMap {
-	[name: string]: number;
 }
 
 /**
@@ -58,9 +53,9 @@ export interface IRolesAction {
 	payload: IPlayerRole[]
 }
 
-export interface IPlayerPositionMapAction {
+export interface INumberAction {
 	type: string,
-	payload: IPlayerPositionMap
+	payload: number
 }
 
 export interface ILine {
@@ -76,6 +71,6 @@ export interface ILineWithStyle extends ILine {
 }
 
 export interface IServerMessage {
-	type: "NewRoom" | "ConnectRoom" | "StartGame" | "GetRole" | "GetPlayerOrder" | "Draw",
+	type: "NewRoom" | "ConnectRoom" | "StartGame" | "GetRole" | "GetFirstPlayer" | "Draw" | "EndTurn",
 	content: any
 }

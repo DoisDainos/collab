@@ -7,6 +7,7 @@ import Palette from "./Palette";
 interface IProps {
   canDraw: boolean;
   showPalette: boolean;
+  onEndStroke: () => void;
 }
 
 function Canvas(props: IProps) {
@@ -82,6 +83,7 @@ function Canvas(props: IProps) {
 			if (!alreadySent) {
 				submitLines(roomCode, playerName, linesToSend, strokeStyle, lineWidth);
 				linesToSend = [];
+        props.onEndStroke();
 			}
 			alreadySent = true;
 		}

@@ -51,9 +51,6 @@ const App = () => {
       case "GetRole":
         dispatch(Actions.setRole(message.content.role));
         break;
-      case "GetPlayerOrder":
-        dispatch(Actions.setPlayerOrder(message.content.playerPositionMap));
-        break;
       case "Draw":
         const linesWithStyle: ILineWithStyle[] = [];
         for (const line of message.content.lines as ILine[]) {
@@ -67,6 +64,10 @@ const App = () => {
           })
         }
         dispatch(Actions.addLines(linesWithStyle));
+        break;
+      case "EndTurn":
+      case "GetFirstPlayer":
+        dispatch(Actions.setActivePlayer(message.content.activePlayer));
         break;
       default:
         break;

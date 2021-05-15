@@ -4,7 +4,7 @@ const WebSocket = require('ws');
 const port = 8081;
 const wss = new WebSocket.Server({ port: 8081 });
 
-// { [CODE]: { players: [{ playerName: string, role: string, socket: WebSocket, position: number }], game: { lines: Line[] } } }
+// { [CODE]: { players: [{ playerName: string, role: string, socket: WebSocket, position: number }], game: { lines: Line[], currentPlayerPosition: number } } }
 const roomStateMap = {};
 
 wss.on('connection', ws => {
@@ -33,14 +33,19 @@ wss.on('connection', ws => {
           handleGetRole(ws, data);
           break;
 
-        case 'GetPlayerOrder':
+        case 'GetFirstPlayer':
           // Data: { code: string }
-          handleGetPlayerOrder(ws, data);
+          handleGetFirstPlayer(ws, data);
           break;
 
         case 'Draw':
           handleDraw(data);
           break;
+
+        case 'EndTurn':
+          handleEndTurn(data);
+          break;
+
         default:
           console.log('Default message received');
       }
@@ -123,11 +128,12 @@ function handleGetRole(ws, data) {
   const chosen = utils.getRandomIndex(availableRoles.length)
   console.log('Assigned ' + data.playerName + ' the role: ' + availableRoles[chosen]);
   currentPlayer.role = availableRoles[chosen];
+  room.game.currentPlayerPosition = 0;
   ws.send(JSON.stringify({ type: 'GetRole', content: { role: availableRoles[chosen] } }));
 }
 
-function handleGetPlayerOrder(ws, data) {
-  console.log('Get player order');
+function handleGetFirstPlayer(ws, data) {
+  console.log('Get first player');
   const room = roomStateMap[data.code];
   const indices = [];
   for (let i = 0; i < room.players.length; i++) {
@@ -136,6 +142,7 @@ function handleGetPlayerOrder(ws, data) {
     }
   }
   const playerPositionMap = {};
+  let firstPlayer = "";
   for (const player of room.players) {
     if (!player.position) {
       const randomIndex = utils.getRandomIndex(indices.length)
@@ -143,10 +150,14 @@ function handleGetPlayerOrder(ws, data) {
       player.position = position;
       indices.splice(indices.indexOf(randomIndex), 1);
     }
+    if (player.position === 0) {
+      firstPlayer = player.playerName;
+    }
     playerPositionMap[player.playerName] = player.position;
   }
   console.log('Player position map:', playerPositionMap);
-  ws.send(JSON.stringify({ type: 'GetPlayerOrder', content: { playerPositionMap: playerPositionMap } }));
+  console.log('Sending first player to client:', firstPlayer);
+  ws.send(JSON.stringify({ type: 'GetFirstPlayer', content: { activePlayer: firstPlayer } }));
 }
 
 function handleDraw(data) {
@@ -159,5 +170,24 @@ function handleDraw(data) {
     if (player.playerName !== data.player) {
       player.socket.send(JSON.stringify({ type: 'Draw', content: { lines: data.lines, strokeStyle: data.strokeStyle, lineWidth: data.lineWidth } }));
     }
+  }
+}
+
+function handleEndTurn(data) {
+  console.log('Ending turn');
+  const room = roomStateMap[data.code];
+  let activePlayer = "";
+  room.game.currentPlayerPosition++;
+  if (room.game.currentPlayerPosition >= room.players.length) {
+    room.game.currentPlayerPosition = 0;
+  }
+  for (const player of room.players) {
+    if (player.position === room.game.currentPlayerPosition) {
+      activePlayer = player.playerName;
+    }
+  }
+  console.log(`New active player: ${activePlayer}`);
+  for (const player of room.players) {
+    player.socket.send(JSON.stringify({ type: 'EndTurn', content: { activePlayer: activePlayer } }));
   }
 }
