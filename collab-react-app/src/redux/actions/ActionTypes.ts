@@ -5,3 +5,4 @@ export const SET_POSSIBLE_ROLES = "SET_POSSIBLE_ROLES";
 export const SET_ROLE = "SET_ROLE";
 export const ADD_LINES = "ADD_LINES";
 export const SET_PLAYING = "SET_PLAYING";
+export const SET_PLAYER_ORDER = "SET_PLAYER_ORDER";

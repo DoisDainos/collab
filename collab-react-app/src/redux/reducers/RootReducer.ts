@@ -3,17 +3,17 @@ import * as ActionTypes from "../actions/ActionTypes";
 
 type IReducerFunction = (
   state: Interfaces.IPlayerState | undefined,
-  action: Interfaces.IStringAction | Interfaces.IStringArrayAction | Interfaces.IBooleanAction | Interfaces.ILinesAction | Interfaces.IRolesAction
+  action: Interfaces.IStringAction | Interfaces.IStringArrayAction | Interfaces.IBooleanAction | Interfaces.ILinesAction | Interfaces.IRolesAction | Interfaces.IPlayerPositionMapAction
 ) => Interfaces.IPlayerState;
 
 const initialState: Interfaces.IPlayerState = {
   room: "",
   name: "",
-  players: [],
+  players: {},
   canvasLines: [],
   playing: false,
   role: "",
-  possibleRoles: []
+  possibleRoles: [],
 };
 
 const RootReducer: IReducerFunction = (state = initialState, action) => {
@@ -32,9 +32,14 @@ const RootReducer: IReducerFunction = (state = initialState, action) => {
 			};
 		case ActionTypes.ADD_PLAYER:
 			const names = action.payload as string[];
+      const players: Interfaces.IPlayerPositionMap = {};
+      for (const name of names) {
+        // Default position as -1
+        players[name] = -1;
+      }
       return {
 				...state,
-				players: names
+				players: players
 			};
     case ActionTypes.SET_POSSIBLE_ROLES:
 			const roles = action.payload as Interfaces.IPlayerRole[];
@@ -59,6 +64,12 @@ const RootReducer: IReducerFunction = (state = initialState, action) => {
       return {
         ...state,
         canvasLines: [ ...state.canvasLines, ...lines ]
+      }
+    case ActionTypes.SET_PLAYER_ORDER:
+      const playerPositionMap = action.payload as Interfaces.IPlayerPositionMap;
+      return {
+        ...state,
+        players: playerPositionMap
       }
     default:
       return state;

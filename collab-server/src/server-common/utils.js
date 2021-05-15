@@ -15,5 +15,9 @@ module.exports = {
       result += possibleChars.charAt(Math.floor(Math.random() * charLength));
     }
     return result;
+  },
+
+  getRandomIndex: (arrayLength) => {
+    return Math.floor(Math.random() * (arrayLength - 1))
   }
 }

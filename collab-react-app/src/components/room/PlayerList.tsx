@@ -15,7 +15,7 @@ const PlayerList = () => {
             </div>
             <div>
               {
-                store.getState().players.map((name: string, index: number) => {
+                Object.keys(store.getState().players).map((name: string, index: number) => {
                   if (store.getState().name !== name) {
                     return <p key={ index }>{ name }</p>
                   }

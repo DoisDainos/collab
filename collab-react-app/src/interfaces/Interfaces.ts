@@ -1,13 +1,33 @@
+/**
+ * State for client to keep track of their view of the game.
+ */
 export interface IPlayerState {
+	// Room code
 	room: string,
+	// Player name
 	name: string,
-	players: string[],
+	// All players with positions to dictate order of play
+	players: IPlayerPositionMap,
+	// State of lines on the canvas to draw
 	canvasLines: ILineWithStyle[],
+	// Is the game being played
 	playing: boolean,
+	// Player's game role
 	role: string,
-	possibleRoles: IPlayerRole[]
+	// All possible roles with counts
+	possibleRoles: IPlayerRole[],
 }
 
+/**
+ * Mapping of player names to position, default position is -1.
+ */
+export interface IPlayerPositionMap {
+	[name: string]: number;
+}
+
+/**
+ * Player roles and the number of players for that role.
+ */
 export interface IPlayerRole {
 	roleName: string,
 	roleCount: number
@@ -38,6 +58,11 @@ export interface IRolesAction {
 	payload: IPlayerRole[]
 }
 
+export interface IPlayerPositionMapAction {
+	type: string,
+	payload: IPlayerPositionMap
+}
+
 export interface ILine {
 	startX: number,
 	startY: number,
@@ -51,6 +76,6 @@ export interface ILineWithStyle extends ILine {
 }
 
 export interface IServerMessage {
-	type: "NewRoom" | "ConnectRoom" | "StartGame" | "GetRole" | "Draw",
+	type: "NewRoom" | "ConnectRoom" | "StartGame" | "GetRole" | "GetPlayerOrder" | "Draw",
 	content: any
 }

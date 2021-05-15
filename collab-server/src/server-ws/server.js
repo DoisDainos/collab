@@ -4,7 +4,7 @@ const WebSocket = require('ws');
 const port = 8081;
 const wss = new WebSocket.Server({ port: 8081 });
 
-// { [CODE]: { players: [{ playerName: string, role: string, socket: WebSocket }], game: { lines: Line[] } } }
+// { [CODE]: { players: [{ playerName: string, role: string, socket: WebSocket, position: number }], game: { lines: Line[] } } }
 const roomStateMap = {};
 
 wss.on('connection', ws => {
@@ -33,8 +33,9 @@ wss.on('connection', ws => {
           handleGetRole(ws, data);
           break;
 
-        case 'GetActivePlayer':
-          handleGetActivePlayer(data);
+        case 'GetPlayerOrder':
+          // Data: { code: string }
+          handleGetPlayerOrder(ws, data);
           break;
 
         case 'Draw':
@@ -73,7 +74,7 @@ function handleConnectToRoom(ws, data) {
   console.log('Connect to room');
   if (!roomStateMap[data.code]) {
     ws.send(JSON.stringify({ type: 'ConnectRoom', content: { players: [], invalid: true } }));
-    console.log("Invalid or nonexistent code: " + data.code);
+    console.log('Invalid or nonexistent code: ' + data.code);
   } else {
     roomStateMap[data.code].players.push({ playerName: data.player, socket: ws });
     const playerNames = [];
@@ -102,7 +103,6 @@ function handleGetRole(ws, data) {
   const room = roomStateMap[data.code];
   const existingRoles = {};
   let currentPlayer;
-  console.log("ROOM", room);
   for (const player of room.players) {
     if (player.playerName === data.playerName) {
       currentPlayer = player;
@@ -113,18 +113,40 @@ function handleGetRole(ws, data) {
       existingRoles[player.role] = 1;
     }
   }
-  console.log("Existing roles:", existingRoles);
+  console.log('Existing roles:', existingRoles);
   availableRoles = [];
   for (const role of data.possibleRoles) {
     if (role.roleCount !== existingRoles[role.roleName]) {
       availableRoles.push(role.roleName);
     }
   }
-  const chosen = Math.floor(Math.random() * (availableRoles.length - 1));
+  const chosen = utils.getRandomIndex(availableRoles.length)
   console.log('Assigned ' + data.playerName + ' the role: ' + availableRoles[chosen]);
   currentPlayer.role = availableRoles[chosen];
-  console.log("Modified room:", room);
-  ws.send(JSON.stringify({ type: 'GetRole', content: { role: availableRoles[chosen] } }))
+  ws.send(JSON.stringify({ type: 'GetRole', content: { role: availableRoles[chosen] } }));
+}
+
+function handleGetPlayerOrder(ws, data) {
+  console.log('Get player order');
+  const room = roomStateMap[data.code];
+  const indices = [];
+  for (let i = 0; i < room.players.length; i++) {
+    if (!room.players[i].position) {
+      indices.push(i);
+    }
+  }
+  const playerPositionMap = {};
+  for (const player of room.players) {
+    if (!player.position) {
+      const randomIndex = utils.getRandomIndex(indices.length)
+      const position = indices[randomIndex];
+      player.position = position;
+      indices.splice(indices.indexOf(randomIndex), 1);
+    }
+    playerPositionMap[player.playerName] = player.position;
+  }
+  console.log('Player position map:', playerPositionMap);
+  ws.send(JSON.stringify({ type: 'GetPlayerOrder', content: { playerPositionMap: playerPositionMap } }));
 }
 
 function handleDraw(data) {

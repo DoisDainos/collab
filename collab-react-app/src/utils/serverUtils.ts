@@ -12,8 +12,8 @@ export async function parseTextResponse(response: Response): Promise<string> {
 }
 
 export async function pingServer(): Promise<boolean> {
-	return new Promise<boolean>((resolve, reject) => {
-		socket.addEventListener("open", (event: Event) => {
+	return new Promise<boolean>(resolve => {
+		socket.addEventListener("open", () => {
 			resolve(true);
 		});
 	}).catch(e => {
@@ -45,6 +45,11 @@ export function submitLines(code: string, player: string, lines: ILine[], stroke
 export function getRole(code: string, player: string, possibleRoles: IPlayerRole[]) {
 	const content = { code: code, playerName: player, possibleRoles: possibleRoles };
 	socket.send(JSON.stringify({ type: "GetRole", content: JSON.stringify(content) }));
+}
+
+export function getPlayerOrder(code: string) {
+	const content = { code: code };
+	socket.send(JSON.stringify({ type: "GetPlayerOrder", content: JSON.stringify(content) }));
 }
 
 export function listenForMessage(callback: (data: IServerMessage) => void) {
