@@ -26,78 +26,79 @@ function Canvas(props: IProps) {
 	}
 	let linesToSend: ILine[] = [];
 	let alreadySent = false; // If mouseUp, send straight away so this prevents the timer sending
-	let flag = false;
 	let dotFlag = false;
+  let pressedFlag = false;
 
 	let canvas: HTMLCanvasElement;
 	let ctx: CanvasRenderingContext2D;
 
 	useEffect(() => {
-		canvas = document.getElementById("can") as HTMLCanvasElement;
+    canvas = document.getElementById("can") as HTMLCanvasElement;
 		if (canvas && props.canDraw) {
-			canvas.addEventListener("mousemove", function (e) {
-					findXY("move", e)
-			}, false);
-			canvas.addEventListener("mousedown", function (e) {
-					findXY("down", e)
-			}, false);
-			canvas.addEventListener("mouseup", function (e) {
-					findXY("up", e)
-			}, false);
-			canvas.addEventListener("mouseout", function (e) {
-					findXY("out", e)
-			}, false);
-			addLinesFromServer();
+      setCanvas();
+			canvas.addEventListener("mousemove", handleMouseMove);
+			canvas.addEventListener("mousedown", handleMouseDown);
+			canvas.addEventListener("mouseup", handleMouseUp);
+			canvas.addEventListener("mouseout", handleMouseOut);
 		}
-  });
+    addLinesFromServer();
+    return function cleanup() {
+      canvas.removeEventListener("mousemove", handleMouseMove);
+      canvas.removeEventListener("mousedown", handleMouseDown);
+      canvas.removeEventListener("mouseup", handleMouseUp);
+      canvas.removeEventListener("mouseout", handleMouseOut);
+    }
+  }, [props.canDraw]);
 
-	const findXY = (res: string, e: MouseEvent) => {
-		setCanvas();
-		if (res === "down") {
-			alreadySent = false;
-			setTimeout(() => {
-				if (!alreadySent) {
-					console.log(linesToSend);
-					submitLines(roomCode, playerName, linesToSend, strokeStyle, lineWidth);
-					linesToSend = [];
-				}
-			}, 1000);
-			line.startX = line.endX;
-			line.startY = line.endY;
-			line.endX = e.clientX - canvas.offsetLeft;
-			line.endY = e.clientY - canvas.offsetTop;
+  const handleMouseDown = (e: Event) => {
+    pressedFlag = true;
+    alreadySent = false;
+    setTimeout(() => {
+      if (!alreadySent) {
+        console.log(linesToSend);
+        submitLines(roomCode, playerName, linesToSend, strokeStyle, lineWidth);
+        linesToSend = [];
+      }
+    }, 1000);
+    line.startX = line.endX;
+    line.startY = line.endY;
+    line.endX = (e as MouseEvent).clientX - canvas.offsetLeft;
+    line.endY = (e as MouseEvent).clientY - canvas.offsetTop;
 
-			flag = true
-			dotFlag = true;
-			// TODO: send this drawing to server
-			if (dotFlag) {
-					ctx.beginPath();
-					ctx.fillStyle = strokeStyle;
-					ctx.fillRect(line.endX, line.endY, 2, 2);
-					ctx.closePath();
-					dotFlag = false;
-			}
-		}
-		if (res === "up" || res === "out") {
-			flag = false;
-			if (!alreadySent) {
-				submitLines(roomCode, playerName, linesToSend, strokeStyle, lineWidth);
-				linesToSend = [];
-        props.onEndStroke();
-			}
-			alreadySent = true;
-		}
-		if (res === "move") {
-			if (flag) {
-				line.startX = line.endX;
-				line.startY = line.endY;
-				line.endX = e.clientX - canvas.offsetLeft;
-				line.endY = e.clientY - canvas.offsetTop;
-				linesToSend.push(Object.assign({}, line));
-				draw(line);
-			}
-		}
-	}
+    dotFlag = true;
+    // TODO: send this drawing to server
+    if (dotFlag) {
+      ctx.beginPath();
+      ctx.fillStyle = strokeStyle;
+      ctx.fillRect(line.endX, line.endY, 2, 2);
+      ctx.closePath();
+      dotFlag = false;
+    }
+  }
+
+  const handleMouseMove = (e: Event) => {
+    if (pressedFlag) {
+      line.startX = line.endX;
+      line.startY = line.endY;
+      line.endX = (e as MouseEvent).clientX - canvas.offsetLeft;
+      line.endY = (e as MouseEvent).clientY - canvas.offsetTop;
+      linesToSend.push(Object.assign({}, line));
+      draw(line);
+    }
+  }
+
+  const handleMouseUp = () => {
+    if (pressedFlag && !alreadySent) {
+      submitLines(roomCode, playerName, linesToSend, strokeStyle, lineWidth);
+      linesToSend = [];
+      props.onEndStroke();
+    }
+    pressedFlag = false;
+  }
+
+  const handleMouseOut = () => {
+    handleMouseUp();
+  }
 
 	const draw = (line: ILine | ILineWithStyle) => {
 		setCanvas();
