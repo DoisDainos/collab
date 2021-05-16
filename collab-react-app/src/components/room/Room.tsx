@@ -1,7 +1,7 @@
 import React from "react";
 import { ReactReduxContext, connect } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
-import Button from "react-bootstrap/Button";
+import Button from "@material-ui/core/Button";
 import PlayerList from "./PlayerList";
 import { startRoomGame } from "../../utils/serverUtils";
 
@@ -22,7 +22,8 @@ function Room() {
             </p>
             <PlayerList />
             <Button
-              variant="primary"
+              variant="contained"
+              color="primary"
               onClick={() => {
                 startRoomGame(store.getState().room);
               }}

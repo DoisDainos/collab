@@ -40,6 +40,10 @@ function Canvas(props: IProps) {
 			canvas.addEventListener("mousedown", handleMouseDown);
 			canvas.addEventListener("mouseup", handleMouseUp);
 			canvas.addEventListener("mouseout", handleMouseOut);
+      canvas.addEventListener("touchmove", handleMouseMove);
+			canvas.addEventListener("touchstart", handleMouseDown);
+			canvas.addEventListener("touchdown", handleMouseUp);
+			canvas.addEventListener("touchcancel", handleMouseOut);
 		}
     addLinesFromServer();
     return function cleanup() {
@@ -47,6 +51,10 @@ function Canvas(props: IProps) {
       canvas.removeEventListener("mousedown", handleMouseDown);
       canvas.removeEventListener("mouseup", handleMouseUp);
       canvas.removeEventListener("mouseout", handleMouseOut);
+      canvas.removeEventListener("touchmove", handleMouseMove);
+			canvas.removeEventListener("touchstart", handleMouseDown);
+			canvas.removeEventListener("touchdown", handleMouseUp);
+			canvas.removeEventListener("touchcancel", handleMouseOut);
     }
   }, [props.canDraw]);
 
@@ -62,8 +70,13 @@ function Canvas(props: IProps) {
     }, 1000);
     line.startX = line.endX;
     line.startY = line.endY;
-    line.endX = (e as MouseEvent).clientX - canvas.offsetLeft;
-    line.endY = (e as MouseEvent).clientY - canvas.offsetTop;
+    if ((e as MouseEvent).clientX) {
+      line.endX = (e as MouseEvent).clientX - canvas.offsetLeft;
+      line.endY = (e as MouseEvent).clientY - canvas.offsetTop;
+    } else if ((e as TouchEvent).touches) {
+      line.endX = (e as TouchEvent).touches[0].clientX - canvas.offsetLeft;
+      line.endY = (e as TouchEvent).touches[0].clientY - canvas.offsetTop;
+    }
 
     dotFlag = true;
     // TODO: send this drawing to server
@@ -80,8 +93,13 @@ function Canvas(props: IProps) {
     if (pressedFlag) {
       line.startX = line.endX;
       line.startY = line.endY;
-      line.endX = (e as MouseEvent).clientX - canvas.offsetLeft;
-      line.endY = (e as MouseEvent).clientY - canvas.offsetTop;
+      if ((e as MouseEvent).clientX) {
+        line.endX = (e as MouseEvent).clientX - canvas.offsetLeft;
+        line.endY = (e as MouseEvent).clientY - canvas.offsetTop;
+      } else if ((e as TouchEvent).touches) {
+        line.endX = (e as TouchEvent).touches[0].clientX - canvas.offsetLeft;
+        line.endY = (e as TouchEvent).touches[0].clientY - canvas.offsetTop;
+      }
       linesToSend.push(Object.assign({}, line));
       draw(line);
     }
@@ -142,9 +160,15 @@ function Canvas(props: IProps) {
     lineWidth = width;
   }
 
+  let canvasWidth = 0.8 * window.innerWidth;
+  let canvasHeight = canvasWidth;
+
+  window.onresize = () => {
+  }
+
 	return (
   	<>
-  			<canvas id="can" width="400" height="400" style={{ position: "absolute", top: "10%", left: "10%", border: "2px solid" }}></canvas>
+  			<canvas id="can" width={canvasWidth} height={canvasHeight} style={{ border: "2px solid" }}></canvas>
         {
           props.showPalette &&
     			<Palette
@@ -152,10 +176,12 @@ function Canvas(props: IProps) {
             setLineWidth={width => setLineWidth(width)}
           />
         }
-  			<div style={{ position: "absolute", top: "20%", left: "43%" }}>Eraser</div>
+  			<div>Eraser</div>
+  			<div onClick={ () => {
+          setStrokeStyle("white");
+          setLineWidth(14);
+        } } style={{ width: "15px", height: "15px", background: "white", border: "2px solid" }} id="white"></div>
   			<img id="canvasimg" style={{ position: "absolute", top: "10%", left: "52%" }} />
-  			<input type="button" value="save" id="btn" size={30} style={{ position: "absolute", top: "55%", left: "10%" }} />
-  			<input type="button" value="clear" id="clr" size={23} style={{ position: "absolute", top: "55%", left: "15%" }} />
   	</>
 	);
 }

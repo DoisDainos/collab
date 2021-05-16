@@ -5,8 +5,9 @@ const Landing = () => {
   console.log("Connected");
   return (
     <>
-      Connected to server
-      <hr style={{ "width": "50%" }} />
+      <div className="PageTitle">
+        Spy Paint
+      </div>
       <RoomConnect />
     </>
   );
