@@ -14,7 +14,7 @@ const RoomConnect = () => {
 
   const history = useHistory();
 
-  const iconPath = process.env.PUBLIC_URL + "/assets/";
+  // const iconPath = process.env.PUBLIC_URL + "/assets/";
 
   return (
     <>

@@ -4,7 +4,7 @@ const WebSocket = require('ws');
 const port = 8081;
 const wss = new WebSocket.Server({ port: 8081 });
 
-// { [CODE]: { players: [{ playerName: string, role: string, socket: WebSocket, position: number }], game: { word: string, lines: Line[], currentPlayerPosition: number } } }
+// { [CODE]: { players: [{ playerName: string, role: string, socket: WebSocket, position: number, colour: string }], game: { word: string, lines: Line[], currentPlayerPosition: number } } }
 const roomStateMap = {};
 
 wss.on('connection', ws => {
@@ -24,22 +24,27 @@ wss.on('connection', ws => {
           handleConnectToRoom(ws, data);
           break;
 
+        case 'SetPlayerColour':
+          // data: { code: string, playerName: string, colour: string }
+          handleSetPlayerColour(data);
+          break;
+
         case 'StartGame':
           handleStartGame(data);
           break;
 
         case 'GetRole':
-          // Data: { code: string, playerName: string, possibleRoles: Array<{ roleName: string, roleCount: number }> }
+          // data: { code: string, playerName: string, possibleRoles: Array<{ roleName: string, roleCount: number }> }
           handleGetRole(ws, data);
           break;
-          
+
         case 'GetWord':
-          // Data: { code: string, playerName: string }
+          // data: { code: string, playerName: string }
           handleGetWord(data);
           break;
 
         case 'GetFirstPlayer':
-          // Data: { code: string }
+          // data: { code: string }
           handleGetFirstPlayer(ws, data);
           break;
 
@@ -108,6 +113,17 @@ function handleStartGame(data) {
   }
 }
 
+function handleSetPlayerColour(data) {
+  console.log(`Setting ${data.colour} colour for ${data.playerName} in room ${data.code}`);
+  const room = roomStateMap[data.code];
+  for (const player of room.players) {
+    if (player === data.playerName) {
+      player.colour = data.colour;
+    }
+    player.socket.send(JSON.stringify({ type: 'SetPlayerColour', content: { playerName: data.playerName, colour: data.colour } }));
+  }
+}
+
 function handleGetRole(ws, data) {
   console.log(data.playerName + ' has requested their role from the following possible roles:', ...data.possibleRoles);
   const room = roomStateMap[data.code];
@@ -145,13 +161,14 @@ function handleGetWord(data) {
   if (!room.game.word) {
     room.game.word = utils.getRandomWord();
     console.log(`Word: ${room.game.word}`);
-  for (const player of room.players) {
-    switch (player.role) {
-      case "Spy":
-        player.socket.send(JSON.stringify({ type: 'GetWord', content: { word: undefined } }));
-        break;
-      default:
-        player.socket.send(JSON.stringify({ type: 'GetWord', content: { word: room.game.word } }));
+    for (const player of room.players) {
+      switch (player.role) {
+        case "Spy":
+          player.socket.send(JSON.stringify({ type: 'GetWord', content: { word: undefined } }));
+          break;
+        default:
+          player.socket.send(JSON.stringify({ type: 'GetWord', content: { word: room.game.word } }));
+      }
     }
   }
 }
@@ -192,7 +209,7 @@ function handleDraw(data) {
   roomStateMap[data.code].game.lines.push(data.lines);
   for (const player of roomStateMap[data.code].players) {
     if (player.playerName !== data.player) {
-      player.socket.send(JSON.stringify({ type: 'Draw', content: { lines: data.lines, strokeStyle: data.strokeStyle, lineWidth: data.lineWidth } }));
+      player.socket.send(JSON.stringify({ type: 'Draw', content: { lines: data.lines, playerName: data.player } }));
     }
   }
 }

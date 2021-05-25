@@ -6,7 +6,7 @@ import Room from "./components/room/Room";
 import Game from "./components/game/Game";
 import Actions from "./redux/actions/Actions";
 import "./App.css";
-import { IServerMessage, ILine, ILineWithStyle } from "./interfaces/Interfaces";
+import { IServerMessage, ILine, ILineFromPlayer } from "./interfaces/Interfaces";
 import { listenForMessage, pingServer } from "./utils/serverUtils";
 
 const App = () => {
@@ -45,6 +45,9 @@ const App = () => {
       case "ConnectRoom":
         dispatch(Actions.setPlayers(message.content.players));
         break;
+      case "SetPlayerColour":
+        dispatch(Actions.setPlayerColour(message.content.playerName, message.content.colour));
+        break;
       case "StartGame":
         dispatch(Actions.setPlaying(true));
         break;
@@ -55,18 +58,17 @@ const App = () => {
         dispatch(Actions.setGameWord(message.content.word));
         break;
       case "Draw":
-        const linesWithStyle: ILineWithStyle[] = [];
+        const linesFromPlayer: ILineFromPlayer[] = [];
         for (const line of message.content.lines as ILine[]) {
-          linesWithStyle.push({
+          linesFromPlayer.push({
             startX: line.startX,
             startY: line.startY,
             endX: line.endX,
             endY: line.endY,
-            strokeStyle: message.content.strokeStyle as string,
-            lineWidth: message.content.lineWidth as number
+            playerName: message.content.playerName as string,
           })
         }
-        dispatch(Actions.addLines(linesWithStyle));
+        dispatch(Actions.addLines(linesFromPlayer));
         break;
       case "EndTurn":
       case "GetFirstPlayer":

@@ -32,6 +32,11 @@ export function submitRoomCode(code: string, player: string) {
 	socket.send(JSON.stringify({ type: "ConnectRoom", content: JSON.stringify(content) }));
 }
 
+export function setPlayerColour(code: string, playerName: string, colour: string) {
+	const content = { code: code, playerName: playerName, colour: colour };
+	socket.send(JSON.stringify({ type: "SetPlayerColour", content: JSON.stringify(content) }));
+}
+
 export function startRoomGame(code: string) {
 	const content = { code: code };
 	socket.send(JSON.stringify({ type: "StartGame", content: JSON.stringify(content) }));

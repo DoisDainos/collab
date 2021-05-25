@@ -3,13 +3,14 @@ import * as ActionTypes from "../actions/ActionTypes";
 
 type IReducerFunction = (
   state: Interfaces.IPlayerState | undefined,
-  action: Interfaces.IStringAction | Interfaces.IStringArrayAction | Interfaces.IBooleanAction | Interfaces.ILinesAction | Interfaces.IRolesAction
+  action: any
 ) => Interfaces.IPlayerState;
 
 const initialState: Interfaces.IPlayerState = {
   room: "",
   name: "",
   players: [],
+  playerColourMap: {},
   activePlayer: "",
   canvasLines: [],
   playing: false,
@@ -38,6 +39,16 @@ const RootReducer: IReducerFunction = (state = initialState, action) => {
 				...state,
 				players: names
 			};
+    case ActionTypes.SET_PLAYER_COLOUR:
+			const playerName = (action.payload as Interfaces.IPlayerColourAction).playerName;
+      const colour = (action.payload as Interfaces.IPlayerColourAction).colour;
+      return {
+				...state,
+				playerColourMap: {
+          ...state.playerColourMap,
+          [playerName]: colour
+        }
+			};
     case ActionTypes.SET_POSSIBLE_ROLES:
 			const roles = action.payload as Interfaces.IPlayerRole[];
       return {
@@ -57,7 +68,7 @@ const RootReducer: IReducerFunction = (state = initialState, action) => {
 				playing: playing
 			};
     case ActionTypes.ADD_LINES:
-      const lines = action.payload as Interfaces.ILineWithStyle[];
+      const lines = action.payload as Interfaces.ILineFromPlayer[];
       return {
         ...state,
         canvasLines: [ ...state.canvasLines, ...lines ]

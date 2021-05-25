@@ -3,7 +3,9 @@ import { ReactReduxContext, connect } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import PlayerList from "./PlayerList";
+import ColourPicker from "./ColourPicker";
 import { startRoomGame } from "../../utils/serverUtils";
+import { IPlayerState } from "../../interfaces/Interfaces";
 
 function Room() {
   const history = useHistory();
@@ -21,6 +23,7 @@ function Room() {
               Room: { store.getState().room }
             </p>
             <PlayerList />
+            <ColourPicker />
             <Button
               variant="contained"
               color="primary"
@@ -37,7 +40,7 @@ function Room() {
   );
 }
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = (state: IPlayerState) => {
   return {
     room: state.room,
     playing: state.playing

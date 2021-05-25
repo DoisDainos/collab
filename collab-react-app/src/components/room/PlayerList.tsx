@@ -1,6 +1,7 @@
 import React from "react";
 import { ReactReduxContext } from "react-redux";
 import { connect } from "react-redux";
+import { IPlayerState } from "../../interfaces/Interfaces";
 
 const PlayerList = () => {
   return (
@@ -29,7 +30,7 @@ const PlayerList = () => {
   );
 }
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = (state: IPlayerState) => {
   return {
     players: state.players
   }

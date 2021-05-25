@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { IPlayerState, ILine, ILineWithStyle } from "../../interfaces/Interfaces";
+import { IPlayerColourMap, IPlayerState, ILine, ILineFromPlayer, ILineWithStyle } from "../../interfaces/Interfaces";
 import { submitLines } from "../../utils/serverUtils";
 import Palette from "./Palette";
 
@@ -11,9 +11,10 @@ interface IProps {
 }
 
 function Canvas(props: IProps) {
-	const lines = useSelector<IPlayerState>(state => state.canvasLines) as ILineWithStyle[];
+	const lines = useSelector<IPlayerState>(state => state.canvasLines) as ILineFromPlayer[];
 	const roomCode = useSelector<IPlayerState>(state => state.room) as string;
 	const playerName = useSelector<IPlayerState>(state => state.name) as string;
+  const playerColourMap = useSelector<IPlayerState>(state => state.playerColourMap) as IPlayerColourMap;
 	useSelector<IPlayerState>(state => state.role) as string;
 
 	let strokeStyle = "black";
@@ -119,12 +120,16 @@ function Canvas(props: IProps) {
     handleMouseUp();
   }
 
-	const draw = (line: ILine | ILineWithStyle) => {
+	const draw = (line: ILine | ILineFromPlayer | ILineWithStyle) => {
 		setCanvas();
 		ctx.beginPath();
 		ctx.moveTo(line.startX, line.startY);
 		ctx.lineTo(line.endX, line.endY);
-		if ("strokeStyle" in line) {
+    if ("playerName" in line) {
+			ctx.strokeStyle = playerColourMap[line.playerName];
+    } else if (playerColourMap[playerName]) {
+			ctx.strokeStyle = playerColourMap[playerName];
+		} else if ("strokeStyle" in line) {
 			ctx.strokeStyle = line.strokeStyle;
 		} else {
 			ctx.strokeStyle = strokeStyle;
@@ -139,8 +144,8 @@ function Canvas(props: IProps) {
 	}
 
 	const addLinesFromServer = () => {
-    const adjutedLines = resizeLinesForCanvas(lines);
-		for (const line of adjutedLines) {
+    const adjustedLines = resizeLinesForCanvas(lines);
+		for (const line of adjustedLines) {
 			draw(line);
 		}
 	}
@@ -169,14 +174,15 @@ function Canvas(props: IProps) {
     canvasHeight = canvasWidth;
   }
 
-  const resizeLinesForCanvas = (lines: ILine[]): ILine[] => {
-    const adjustedLines = [];
+  const resizeLinesForCanvas = (lines: ILineFromPlayer[]): ILineFromPlayer[] => {
+    const adjustedLines: ILineFromPlayer[] = [];
     for (const line of lines) {
       adjustedLines.push({
         startX: line.startX * canvasWidth,
         endX: line.endX * canvasWidth,
         startY: line.startY * canvasHeight,
         endY: line.endY * canvasHeight,
+        playerName: line.playerName,
       });
     }
     return adjustedLines;

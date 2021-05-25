@@ -62,10 +62,14 @@ function Game() {
 				return (
 					<>
             {
-              isActivePlayer() &&
-              <p>
-                Your turn!
-              </p>
+              isActivePlayer() ?
+                <p>
+                  Your turn!
+                </p>
+              :
+                <p>
+                  {activePlayer}'s turn'!
+                </p>
             }
 						{
 							!!state.role ?
@@ -77,7 +81,7 @@ function Game() {
 									/>
 									<Canvas
                     canDraw={isActivePlayer()}
-                    showPalette={true}
+                    showPalette={false}
 										onEndStroke={() => onEndStroke()}
                   />
 								</>

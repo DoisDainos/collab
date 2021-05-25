@@ -1,5 +1,5 @@
 import * as ActionTypes from "./ActionTypes";
-import { ILineWithStyle, IPlayerRole } from "../../interfaces/Interfaces";
+import { ILineFromPlayer, IPlayerRole } from "../../interfaces/Interfaces";
 
 const Actions = {
   setRoom: (room: string) => {
@@ -20,6 +20,16 @@ const Actions = {
     return {
       type: ActionTypes.ADD_PLAYER,
       payload: names
+    }
+  },
+
+  setPlayerColour: (playerName: string, colour: string) => {
+    return {
+      type: ActionTypes.SET_PLAYER_COLOUR,
+      payload: {
+        playerName: playerName,
+        colour: colour
+      }
     }
   },
 
@@ -44,7 +54,7 @@ const Actions = {
     }
   },
 
-  addLines: (lines: ILineWithStyle[]) => {
+  addLines: (lines: ILineFromPlayer[]) => {
     return {
       type: ActionTypes.ADD_LINES,
       payload: lines
