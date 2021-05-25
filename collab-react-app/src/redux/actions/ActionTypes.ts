@@ -7,3 +7,4 @@ export const ADD_LINES = "ADD_LINES";
 export const SET_PLAYING = "SET_PLAYING";
 export const SET_PLAYER_ORDER = "SET_PLAYER_ORDER";
 export const SET_ACTIVE_PLAYER = "SET_ACTIVE_PLAYER";
+export const SET_GAME_WORD = "SET_GAME_WORD";

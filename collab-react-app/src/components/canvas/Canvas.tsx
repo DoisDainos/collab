@@ -42,7 +42,7 @@ function Canvas(props: IProps) {
 			canvas.addEventListener("mouseout", handleMouseOut);
       canvas.addEventListener("touchmove", handleMouseMove);
 			canvas.addEventListener("touchstart", handleMouseDown);
-			canvas.addEventListener("touchdown", handleMouseUp);
+			canvas.addEventListener("touchend", handleMouseUp);
 			canvas.addEventListener("touchcancel", handleMouseOut);
 		}
     addLinesFromServer();
@@ -53,7 +53,7 @@ function Canvas(props: IProps) {
       canvas.removeEventListener("mouseout", handleMouseOut);
       canvas.removeEventListener("touchmove", handleMouseMove);
 			canvas.removeEventListener("touchstart", handleMouseDown);
-			canvas.removeEventListener("touchdown", handleMouseUp);
+			canvas.removeEventListener("touchend", handleMouseUp);
 			canvas.removeEventListener("touchcancel", handleMouseOut);
     }
   }, [props.canDraw]);
@@ -63,8 +63,8 @@ function Canvas(props: IProps) {
     alreadySent = false;
     setTimeout(() => {
       if (!alreadySent) {
-        console.log(linesToSend);
-        submitLines(roomCode, playerName, linesToSend, strokeStyle, lineWidth);
+        const adjustedLines = resizeLinesForServer(linesToSend);
+        submitLines(roomCode, playerName, adjustedLines, strokeStyle, lineWidth);
         linesToSend = [];
       }
     }, 1000);
@@ -107,7 +107,8 @@ function Canvas(props: IProps) {
 
   const handleMouseUp = () => {
     if (pressedFlag && !alreadySent) {
-      submitLines(roomCode, playerName, linesToSend, strokeStyle, lineWidth);
+      const adjustedLines = resizeLinesForServer(linesToSend);
+      submitLines(roomCode, playerName, adjustedLines, strokeStyle, lineWidth);
       linesToSend = [];
       props.onEndStroke();
     }
@@ -138,7 +139,8 @@ function Canvas(props: IProps) {
 	}
 
 	const addLinesFromServer = () => {
-		for (const line of lines) {
+    const adjutedLines = resizeLinesForCanvas(lines);
+		for (const line of adjutedLines) {
 			draw(line);
 		}
 	}
@@ -162,8 +164,39 @@ function Canvas(props: IProps) {
 
   let canvasWidth = 0.8 * window.innerWidth;
   let canvasHeight = canvasWidth;
+  if (canvasHeight > window.innerHeight) {
+    canvasWidth = 0.6 * window.innerHeight;
+    canvasHeight = canvasWidth;
+  }
+
+  const resizeLinesForCanvas = (lines: ILine[]): ILine[] => {
+    const adjustedLines = [];
+    for (const line of lines) {
+      adjustedLines.push({
+        startX: line.startX * canvasWidth,
+        endX: line.endX * canvasWidth,
+        startY: line.startY * canvasHeight,
+        endY: line.endY * canvasHeight,
+      });
+    }
+    return adjustedLines;
+  }
+
+  const resizeLinesForServer = (lines: ILine[]): ILine[] => {
+    const adjustedLines = [];
+    for (const line of lines) {
+      adjustedLines.push({
+        startX: line.startX / canvasWidth,
+        endX: line.endX / canvasWidth,
+        startY: line.startY / canvasHeight,
+        endY: line.endY / canvasHeight,
+      });
+    }
+    return adjustedLines;
+  }
 
   window.onresize = () => {
+    // TODO: re-render to adjust canvas size
   }
 
 	return (

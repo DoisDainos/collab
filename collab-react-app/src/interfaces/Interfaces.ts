@@ -18,6 +18,8 @@ export interface IPlayerState {
 	role: string,
 	// All possible roles with counts
 	possibleRoles: IPlayerRole[],
+	// Current game word
+	gameWord: string;
 }
 
 /**
@@ -71,6 +73,6 @@ export interface ILineWithStyle extends ILine {
 }
 
 export interface IServerMessage {
-	type: "NewRoom" | "ConnectRoom" | "StartGame" | "GetRole" | "GetFirstPlayer" | "Draw" | "EndTurn",
+	type: "NewRoom" | "ConnectRoom" | "StartGame" | "GetRole" | "GetWord" | "GetFirstPlayer" | "Draw" | "EndTurn",
 	content: any
 }

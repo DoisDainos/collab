@@ -4,7 +4,7 @@ const WebSocket = require('ws');
 const port = 8081;
 const wss = new WebSocket.Server({ port: 8081 });
 
-// { [CODE]: { players: [{ playerName: string, role: string, socket: WebSocket, position: number }], game: { lines: Line[], currentPlayerPosition: number } } }
+// { [CODE]: { players: [{ playerName: string, role: string, socket: WebSocket, position: number }], game: { word: string, lines: Line[], currentPlayerPosition: number } } }
 const roomStateMap = {};
 
 wss.on('connection', ws => {
@@ -31,6 +31,11 @@ wss.on('connection', ws => {
         case 'GetRole':
           // Data: { code: string, playerName: string, possibleRoles: Array<{ roleName: string, roleCount: number }> }
           handleGetRole(ws, data);
+          break;
+          
+        case 'GetWord':
+          // Data: { code: string, playerName: string }
+          handleGetWord(data);
           break;
 
         case 'GetFirstPlayer':
@@ -112,10 +117,12 @@ function handleGetRole(ws, data) {
     if (player.playerName === data.playerName) {
       currentPlayer = player;
     }
-    if (existingRoles[player.role]) {
-      existingRoles[player.role]++;
-    } else {
-      existingRoles[player.role] = 1;
+    if (player.role) {
+      if (existingRoles[player.role]) {
+        existingRoles[player.role]++;
+      } else {
+        existingRoles[player.role] = 1;
+      }
     }
   }
   console.log('Existing roles:', existingRoles);
@@ -130,6 +137,23 @@ function handleGetRole(ws, data) {
   currentPlayer.role = availableRoles[chosen];
   room.game.currentPlayerPosition = 0;
   ws.send(JSON.stringify({ type: 'GetRole', content: { role: availableRoles[chosen] } }));
+}
+
+function handleGetWord(data) {
+  console.log(`Getting word for room: ${data.code}`);
+  const room = roomStateMap[data.code];
+  if (!room.game.word) {
+    room.game.word = utils.getRandomWord();
+    console.log(`Word: ${room.game.word}`);
+  for (const player of room.players) {
+    switch (player.role) {
+      case "Spy":
+        player.socket.send(JSON.stringify({ type: 'GetWord', content: { word: undefined } }));
+        break;
+      default:
+        player.socket.send(JSON.stringify({ type: 'GetWord', content: { word: room.game.word } }));
+    }
+  }
 }
 
 function handleGetFirstPlayer(ws, data) {

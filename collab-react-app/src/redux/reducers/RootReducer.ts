@@ -15,6 +15,7 @@ const initialState: Interfaces.IPlayerState = {
   playing: false,
   role: "",
   possibleRoles: [],
+  gameWord: "",
 };
 
 const RootReducer: IReducerFunction = (state = initialState, action) => {
@@ -66,6 +67,12 @@ const RootReducer: IReducerFunction = (state = initialState, action) => {
       return {
         ...state,
         activePlayer: activePlayer
+      }
+    case ActionTypes.SET_GAME_WORD:
+      const word = action.payload as string;
+      return {
+        ...state,
+        gameWord: word
       }
     default:
       return state;

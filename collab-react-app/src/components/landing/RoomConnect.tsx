@@ -24,9 +24,6 @@ const RoomConnect = () => {
         placeholder="Enter player name"
         onChange={event => setName(event.target.value)}
       />
-      <img
-        src={`${iconPath}host.svg`}
-      />
       <p>
         Connect to existing room
       </p>
@@ -49,9 +46,6 @@ const RoomConnect = () => {
       >
         Submit
       </Button>
-      <img
-        src={`${iconPath}join.svg`}
-      />
       <p>
         Create new room
       </p>

@@ -1,10 +1,11 @@
 import React, { useEffect } from "react";
 import { ReactReduxContext, useSelector } from "react-redux";
 import { IPlayerRole, IPlayerState } from "../../interfaces/Interfaces";
-import { endTurn, getFirstPlayer, getRole } from "../../utils/serverUtils";
+import { endTurn, getFirstPlayer, getGameWord, getRole } from "../../utils/serverUtils";
 import Actions from "../../redux/actions/Actions";
 import { useDispatch } from "react-redux";
 import Canvas from "../canvas/Canvas";
+import InfoPanel from "./InfoPanel";
 
 // const ROUNDS = 6;
 
@@ -41,6 +42,7 @@ function Game() {
 			const allRoles = EXTRA_ROLES.concat(defaultRole);
 			dispatch(Actions.setPossibleRoles(allRoles));
 			getRole(roomCode, playerName, allRoles);
+			getGameWord(roomCode, playerName);
       getFirstPlayer(roomCode);
 		}
   });
@@ -56,11 +58,9 @@ function Game() {
 	return (
 		<ReactReduxContext.Consumer>
 			{({ store }) => {
+				const state = store.getState() as IPlayerState;
 				return (
 					<>
-						<p>
-							Room: {store.getState().room}
-						</p>
             {
               isActivePlayer() &&
               <p>
@@ -68,9 +68,13 @@ function Game() {
               </p>
             }
 						{
-							!!store.getState().role ?
+							!!state.role ?
 								<>
-									<div>Role: {store.getState().role}</div>
+									<InfoPanel
+										room={state.room}
+										role={state.role}
+										word={state.gameWord}
+									/>
 									<Canvas
                     canDraw={isActivePlayer()}
                     showPalette={true}

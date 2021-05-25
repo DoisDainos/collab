@@ -1,3 +1,9 @@
+const words = [
+  "Beach",
+  "Wizard",
+  "Castle"
+]
+
 module.exports = {
   getLimitCode: () => {
     return "_LIMIT";
@@ -15,6 +21,10 @@ module.exports = {
       result += possibleChars.charAt(Math.floor(Math.random() * charLength));
     }
     return result;
+  },
+
+  getRandomWord() {
+    return words[this.getRandomIndex(words.length)];
   },
 
   getRandomIndex: (arrayLength) => {

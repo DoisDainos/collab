@@ -47,6 +47,11 @@ export function getRole(code: string, player: string, possibleRoles: IPlayerRole
 	socket.send(JSON.stringify({ type: "GetRole", content: JSON.stringify(content) }));
 }
 
+export function getGameWord(code: string, playerName: string) {
+	const content = { code: code, playerName: playerName };
+	socket.send(JSON.stringify({ type: "GetWord", content: JSON.stringify(content) }));
+}
+
 export function getFirstPlayer(code: string) {
 	const content = { code: code };
 	socket.send(JSON.stringify({ type: "GetFirstPlayer", content: JSON.stringify(content) }));

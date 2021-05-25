@@ -56,6 +56,13 @@ const Actions = {
       type: ActionTypes.SET_ACTIVE_PLAYER,
       payload: currentPlayerPosition
     }
+  },
+
+  setGameWord: (word: string) => {
+    return {
+      type: ActionTypes.SET_GAME_WORD,
+      payload: word
+    }
   }
 }
 
