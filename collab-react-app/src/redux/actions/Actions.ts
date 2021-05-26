@@ -73,6 +73,32 @@ const Actions = {
       type: ActionTypes.SET_GAME_WORD,
       payload: word
     }
+  },
+
+  startGuess: (player: string) => {
+    return {
+      type: ActionTypes.SET_GUESSING,
+      payload: {
+        playerName: player,
+        guessing: true
+      }
+    }
+  },
+
+  endGuess: () => {
+    return {
+      type: ActionTypes.SET_GUESSING,
+      payload: {
+        guessing: false
+      }
+    }
+  },
+
+  submitGuess: (correct: boolean) => {
+    return {
+      type: ActionTypes.SET_CORRECT_GUESS,
+      payload: correct
+    }
   }
 }
 

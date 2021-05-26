@@ -9,3 +9,5 @@ export const SET_PLAYING = "SET_PLAYING";
 export const SET_PLAYER_ORDER = "SET_PLAYER_ORDER";
 export const SET_ACTIVE_PLAYER = "SET_ACTIVE_PLAYER";
 export const SET_GAME_WORD = "SET_GAME_WORD";
+export const SET_GUESSING = "SET_GUESSING";
+export const SET_CORRECT_GUESS = "SET_CORRECT_GUESS";

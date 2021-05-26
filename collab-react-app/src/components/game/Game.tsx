@@ -26,6 +26,7 @@ function Game() {
 	const possibleRoles = useSelector<IPlayerState>(state => state.possibleRoles) as IPlayerRole[];
 	const players = useSelector<IPlayerState>(state => state.players) as string[];
 	const activePlayer = useSelector<IPlayerState>(state => state.activePlayer) as string;
+	const guessingPlayer = useSelector<IPlayerState>(state => state.guessingPlayer) as string;
 	useSelector<IPlayerState>(state => state.role) as string;
 
 	useEffect(() => {
@@ -76,8 +77,11 @@ function Game() {
 								<>
 									<InfoPanel
 										room={state.room}
+                    name={state.name}
 										role={state.role}
 										word={state.gameWord}
+                    playerNames={state.players}
+                    guessingPlayer={guessingPlayer}
 									/>
 									<Canvas
                     canDraw={isActivePlayer()}

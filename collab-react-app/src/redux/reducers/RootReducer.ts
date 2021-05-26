@@ -17,6 +17,7 @@ const initialState: Interfaces.IPlayerState = {
   role: "",
   possibleRoles: [],
   gameWord: "",
+  guessingPlayer: ""
 };
 
 const RootReducer: IReducerFunction = (state = initialState, action) => {
@@ -84,6 +85,19 @@ const RootReducer: IReducerFunction = (state = initialState, action) => {
       return {
         ...state,
         gameWord: word
+      }
+    case ActionTypes.SET_GUESSING:
+      const guessingPlayer = (action.payload as Interfaces.ISetGuessingAction).playerName;
+      const isGuessing = (action.payload as Interfaces.ISetGuessingAction).guessing;
+      return {
+        ...state,
+        guessingPlayer: isGuessing ? guessingPlayer : ""
+      }
+    case ActionTypes.SET_CORRECT_GUESS:
+      // const correct = action.payload as boolean;
+      console.log("Correct: " + action.payload);
+      return {
+        ...state
       }
     default:
       return state;

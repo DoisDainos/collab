@@ -22,6 +22,8 @@ export interface IPlayerState {
 	possibleRoles: IPlayerRole[];
 	// Current game word
 	gameWord: string;
+	// Name of player currently making a spy guess
+	guessingPlayer: string;
 }
 
 export interface IPlayerColourMap {
@@ -69,6 +71,11 @@ export interface INumberAction {
 export interface IPlayerColourAction {
 	playerName: string;
 	colour: string
+}
+
+export interface ISetGuessingAction {
+	playerName: string;
+	guessing: boolean;
 }
 
 export interface ILine {

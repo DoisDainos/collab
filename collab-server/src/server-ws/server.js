@@ -56,6 +56,21 @@ wss.on('connection', ws => {
           handleEndTurn(data);
           break;
 
+        case 'StartGuess':
+          // data: { code: string, playerName: string }
+          handleStartGuess(data);
+          break;
+
+        case 'EndGuess':
+          // data: { code: string }
+          handleEndGuess(data);
+          break;
+
+        case 'SubmitGuess':
+          // data: { code: string, guessedName: string }
+          handleSubmitGuess(data);
+          break;
+
         default:
           console.log('Default message received');
       }
@@ -230,5 +245,40 @@ function handleEndTurn(data) {
   console.log(`New active player: ${activePlayer}`);
   for (const player of room.players) {
     player.socket.send(JSON.stringify({ type: 'EndTurn', content: { activePlayer: activePlayer } }));
+  }
+}
+
+function handleStartGuess(data) {
+  console.log(`Guess has been started for room ${data.code} by ${data.playerName}`);
+  const room = roomStateMap[data.code];
+  for (const player of room.players) {
+    player.socket.send(JSON.stringify({ type: 'StartGuess', content: { playerName: data.playerName } }));
+  }
+}
+
+function handleEndGuess(data) {
+  console.log(`Guess ended for room ${data.code}`);
+  const room = roomStateMap[data.code];
+  for (const player of room.players) {
+    player.socket.send(JSON.stringify({ type: 'EndGuess', content: {} }));
+  }
+}
+
+function handleSubmitGuess(data) {
+  console.log(`Guess submitted for room ${data.code}: ${data.guessedName}`);
+  const room = roomStateMap[data.code];
+  let correct = false;
+  for (const player of room.players) {
+    if (player.playerName === data.guessedName && player.role === "Spy") {
+      correct = true
+    }
+  }
+  if (correct) {
+    console.log(`Correct!`);
+  } else {
+    console.log(`Incorrect!`);
+  }
+  for (const player of room.players) {
+    player.socket.send(JSON.stringify({ type: 'SubmitGuess', content: { correct: correct } }));
   }
 }

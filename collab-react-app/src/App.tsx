@@ -74,6 +74,15 @@ const App = () => {
       case "GetFirstPlayer":
         dispatch(Actions.setActivePlayer(message.content.activePlayer));
         break;
+      case "StartGuess":
+        dispatch(Actions.startGuess(message.content.playerName));
+        break;
+      case "EndGuess":
+        dispatch(Actions.endGuess());
+        break;
+      case "SubmitGuess":
+        dispatch(Actions.submitGuess(message.content.correct));
+        break;
       default:
         break;
     }

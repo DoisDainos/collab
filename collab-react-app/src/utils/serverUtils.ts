@@ -67,6 +67,21 @@ export function endTurn(code: string) {
 	socket.send(JSON.stringify({ type: "EndTurn", content: JSON.stringify(content) }));
 }
 
+export function startGuess(code: string, playerName: string) {
+	const content = { code: code, playerName: playerName };
+	socket.send(JSON.stringify({ type: "StartGuess", content: JSON.stringify(content) }));
+}
+
+export function endGuess(code: string) {
+	const content = { code: code };
+	socket.send(JSON.stringify({ type: "EndGuess", content: JSON.stringify(content) }));
+}
+
+export function submitGuess(code: string, guessedName: string) {
+	const content = { code: code, guessedName: guessedName };
+	socket.send(JSON.stringify({ type: "SubmitGuess", content: JSON.stringify(content) }));
+}
+
 export function listenForMessage(callback: (data: IServerMessage) => void) {
 	socket.addEventListener("message", event => {
 		if (event.data) {
