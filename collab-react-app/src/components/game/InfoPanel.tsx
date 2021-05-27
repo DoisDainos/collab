@@ -3,6 +3,7 @@ import "../../styles/styles.css"
 import Button from "@material-ui/core/Button";
 import GuessSpyPanel from "./GuessSpyPanel";
 import { endGuess, startGuess } from "../../utils/serverUtils";
+import { IPlayerColourMap } from "../../interfaces/Interfaces";
 
 interface IProps {
 	room: string;
@@ -10,6 +11,7 @@ interface IProps {
 	role: string;
 	playerNames: string[];
 	guessingPlayer: string;
+	playerColourMap: IPlayerColourMap
 	word?: string;
 }
 
@@ -49,6 +51,7 @@ function InfoPanel(props: IProps) {
 				open={!!props.guessingPlayer}
 				onClose={() => onClose()}
 				guessingPlayer={props.guessingPlayer}
+				playerColourMap={props.playerColourMap}
 			/>
 		</div>
 	);

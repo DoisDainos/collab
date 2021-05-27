@@ -4,6 +4,12 @@ import { connect } from "react-redux";
 import { setPlayerColour } from "../../utils/serverUtils";
 import { IPlayerColourMap, IPlayerState } from "../../interfaces/Interfaces";
 
+const ClassName = {
+  container: "container-colourPicker",
+  item: "item-colourPicker",
+  palette: "palette-colourPicker",
+}
+
 const colours = [
   "green",
   "blue",
@@ -19,11 +25,8 @@ const ColourPicker = () => {
 		setPlayerColour(roomCode, playerName, obj.id);
 	}
 
-  const isColourAvailable = (colour: string, playerColourMap: IPlayerColourMap, playerName: string): boolean => {
+  const isColourAvailable = (colour: string, playerColourMap: IPlayerColourMap): boolean => {
     for (const player in playerColourMap) {
-      if (player === playerName) {
-        continue;
-      }
       if (playerColourMap[player] === colour) {
         return false;
       }
@@ -36,21 +39,24 @@ const ColourPicker = () => {
       {({ store }) => {
         const state = store.getState();
         return (
-        	<>
-        			<div onClick={ e => setColour(state.room, state.name, e.target as HTMLDivElement) }>Choose Color</div>
-              {
-                colours.map((colour, index) => {
-                  return isColourAvailable(colour, state.playerColourMap, state.name) &&
-            			   <div
-                      onClick={ e => setColour(state.room, state.name, e.target as HTMLDivElement) }
-                      style={{ width: "20px", height: "20px", background: colour }}
-                      id={colour}
-                      key={index}
-                    >
-                    </div>
-                })
-              }
-        	</>
+        	<div className={ClassName.container}>
+        			<div>Choose Color</div>
+              <div className={ClassName.palette}>
+                {
+                  colours.map((colour, index) => {
+                    return isColourAvailable(colour, state.playerColourMap) &&
+              			   <div
+                        onClick={ e => setColour(state.room, state.name, e.target as HTMLDivElement) }
+                        style={{ background: colour }}
+                        id={colour}
+                        key={index}
+                        className={ClassName.item}
+                      >
+                      </div>
+                  })
+                }
+              </div>
+        	</div>
       	);
       }}
     </ReactReduxContext.Consumer>

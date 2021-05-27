@@ -6,6 +6,10 @@ import { useHistory } from "react-router-dom";
 import Actions from "../../redux/actions/Actions";
 import { submitRoomCode, generateRoomCode } from "../../utils/serverUtils";
 
+const ClassName = {
+  container: "container-roomConnect",
+}
+
 const RoomConnect = () => {
   const dispatch = useDispatch();
 
@@ -17,50 +21,70 @@ const RoomConnect = () => {
   // const iconPath = process.env.PUBLIC_URL + "/assets/";
 
   return (
-    <>
-      <TextField
-        value={name}
-        color="primary"
-        placeholder="Enter player name"
-        onChange={event => setName(event.target.value)}
-      />
+    <div className={ClassName.container}>
+      <div>
+        <TextField
+          value={name}
+          color="primary"
+          placeholder="Enter player name"
+          onChange={event => setName(event.target.value)}
+          fullWidth={true}
+          inputProps={{
+            style: { fontSize: "calc(10px + 2vmin)" }
+          }}
+        />
+      </div>
       <p>
         Connect to existing room
       </p>
-      <TextField
-        value={code}
-        color="primary"
-        placeholder="Enter room code"
-        onChange={event => setCode(event.target.value)}
-      />
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => {
-          dispatch(Actions.setPlayers([ name ]));
-          dispatch(Actions.setName(name));
-          dispatch(Actions.setRoom(code));
-          submitRoomCode(code, name);
-          history.push("/room");
-        }}
-      >
-        Submit
-      </Button>
+      <div>
+        <TextField
+          value={code}
+          color="primary"
+          placeholder="Enter room code"
+          onChange={event => setCode(event.target.value)}
+          fullWidth={true}
+          inputProps={{
+            style: { fontSize: "calc(10px + 2vmin)" }
+          }}
+        />
+      </div>
+      <div>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            dispatch(Actions.setPlayers([ name ]));
+            dispatch(Actions.setName(name));
+            dispatch(Actions.setRoom(code));
+            submitRoomCode(code, name);
+            history.push("/room");
+          }}
+          fullWidth={true}
+          style={{ fontSize: "calc(10px + 2vmin)" }}
+        >
+          Submit
+        </Button>
+      </div>
       <p>
         Create new room
       </p>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={ () => {
-          generateRoomCode(name);
-          dispatch(Actions.setName(name));
-          history.push("/room");
-        }}
-      >
-        New Room
-      </Button>
-    </>
+      <div>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={ () => {
+            generateRoomCode(name);
+            dispatch(Actions.setName(name));
+            history.push("/room");
+          }}
+          fullWidth={true}
+          style={{ fontSize: "calc(10px + 2vmin)" }}
+        >
+          New Room
+        </Button>
+      </div>
+    </div>
   )
 }
 

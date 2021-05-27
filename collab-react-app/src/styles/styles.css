@@ -1,4 +1,46 @@
-.container-infoPanel {
+.Banner {
+  margin-bottom: calc(15px + 2vmin);
+  padding: 10px;
+  font-size: calc(15px + 2vmin);
+}
+
+.container-roomConnect {
+  width: 75%;
+  max-width: 300px;
+}
+
+.container-room {
+  width: 75%;
+  max-width: 300px;
+}
+
+.container-roomConnect > * {
+  margin-bottom: calc(20px + 2vmin);
+}
+
+.container-colourPicker {
+  margin: calc(20px + 2vmin);
+}
+
+.palette-colourPicker {
+  margin-top: calc(10px + 2vmin);
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.item-colourPicker {
+  width: calc(30px + 2vmin);
+  height: calc(30px + 2vmin);
+}
+
+.item-playerList {
+  width: calc(30px + 2vmin);
+  height: calc(30px + 2vmin);
+}
+
+.row-playerList {
+  display: flex;
+  justify-content: space-evenly;
 }
 
 .modal-body {

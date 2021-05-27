@@ -3,22 +3,50 @@ import { ReactReduxContext } from "react-redux";
 import { connect } from "react-redux";
 import { IPlayerState } from "../../interfaces/Interfaces";
 
+const ClassName = {
+  item: "item-playerList",
+  row: "row-playerList"
+}
+
 const PlayerList = () => {
   return (
     <ReactReduxContext.Consumer>
       {({ store }) => {
+        const state = store.getState();
         return (
           <>
-            <div>
+            <div className={ClassName.row}>
+              <div>
+                {
+                  state.name
+                }
+              </div>
               {
-                store.getState().name
+                !!state.playerColourMap[state.name] &&
+                  <div
+                    className={ClassName.item}
+                    style={{ background: state.playerColourMap[state.name] }}
+                  />
               }
             </div>
             <div>
               {
-                store.getState().players.map((name: string, index: number) => {
-                  if (store.getState().name !== name) {
-                    return <p key={ index }>{ name }</p>
+                state.players.map((name: string, index: number) => {
+                  if (state.name !== name) {
+                    return (
+                      <>
+                        <div className={ClassName.row} key={ index }>
+                          <p>{ name }</p>
+                          {
+                            !!state.playerColourMap[name] &&
+                              <div
+                                className={ClassName.item}
+                                style={{ background: state.playerColourMap[name] }}
+                              />
+                          }
+                        </div>
+                      </>
+                    );
                   }
                 })
               }
@@ -32,7 +60,8 @@ const PlayerList = () => {
 
 const mapStateToProps = (state: IPlayerState) => {
   return {
-    players: state.players
+    players: state.players,
+    playerColourMap: state.playerColourMap
   }
 }
 

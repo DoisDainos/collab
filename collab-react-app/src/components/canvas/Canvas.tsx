@@ -34,7 +34,7 @@ function Canvas(props: IProps) {
 	let ctx: CanvasRenderingContext2D;
 
 	useEffect(() => {
-    canvas = document.getElementById("can") as HTMLCanvasElement;
+    canvas = document.getElementById("canvas") as HTMLCanvasElement;
 		if (canvas && props.canDraw) {
       setCanvas();
 			canvas.addEventListener("mousemove", handleMouseMove);
@@ -91,6 +91,7 @@ function Canvas(props: IProps) {
   }
 
   const handleMouseMove = (e: Event) => {
+    e.preventDefault();
     if (pressedFlag) {
       line.startX = line.endX;
       line.startY = line.endY;
@@ -153,7 +154,7 @@ function Canvas(props: IProps) {
 	const setCanvas = () => {
 		if (!ctx) {
 			if (!canvas) {
-				canvas = document.getElementById("can") as HTMLCanvasElement;
+				canvas = document.getElementById("canvas") as HTMLCanvasElement;
 			}
 			ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 		}
@@ -207,7 +208,14 @@ function Canvas(props: IProps) {
 
 	return (
   	<>
-  			<canvas id="can" width={canvasWidth} height={canvasHeight} style={{ border: "2px solid" }}></canvas>
+  			<canvas
+          id="canvas"
+          width={canvasWidth}
+          height={canvasHeight}
+          style={{
+            border: "2px solid"
+          }}
+        />
         {
           props.showPalette &&
     			<Palette
@@ -215,11 +223,6 @@ function Canvas(props: IProps) {
             setLineWidth={width => setLineWidth(width)}
           />
         }
-  			<div>Eraser</div>
-  			<div onClick={ () => {
-          setStrokeStyle("white");
-          setLineWidth(14);
-        } } style={{ width: "15px", height: "15px", background: "white", border: "2px solid" }} id="white"></div>
   			<img id="canvasimg" style={{ position: "absolute", top: "10%", left: "52%" }} />
   	</>
 	);

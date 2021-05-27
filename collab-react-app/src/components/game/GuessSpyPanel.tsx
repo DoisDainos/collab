@@ -3,6 +3,7 @@ import "../../styles/styles.css"
 import Button from "@material-ui/core/Button";
 import Modal from "@material-ui/core/Modal";
 import { submitGuess } from "../../utils/serverUtils";
+import { IPlayerColourMap } from "../../interfaces/Interfaces";
 
 interface IProps {
   name: string;
@@ -11,6 +12,7 @@ interface IProps {
   open: boolean;
   onClose: () => void;
   guessingPlayer: string;
+  playerColourMap: IPlayerColourMap;
 }
 
 const ClassName = {
@@ -38,9 +40,12 @@ function GuessSpyPanel(props: IProps) {
                 if (name !== props.name) {
                   return <Button
                     variant="contained"
-                    color="primary"
                     onClick={() => onSubmit(name)}
                     key={index}
+                    style={{
+                      backgroundColor: props.playerColourMap[name],
+                      color: "#fff"
+                    }}
                   >
                     {name}
                   </Button>

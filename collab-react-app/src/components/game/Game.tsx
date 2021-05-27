@@ -82,6 +82,7 @@ function Game() {
 										word={state.gameWord}
                     playerNames={state.players}
                     guessingPlayer={guessingPlayer}
+                    playerColourMap={state.playerColourMap}
 									/>
 									<Canvas
                     canDraw={isActivePlayer()}

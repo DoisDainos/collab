@@ -5,8 +5,10 @@ const Landing = () => {
   console.log("Connected");
   return (
     <>
-      <div className="PageTitle">
-        Spy Paint
+      <div className="Banner">
+        <div className="PageTitle">
+          Spy Draw
+        </div>
       </div>
       <RoomConnect />
     </>
