@@ -1,12 +1,13 @@
 import React, { useEffect } from "react";
-import { ReactReduxContext, useSelector } from "react-redux";
-import { IPlayerRole, IPlayerState } from "../../interfaces/Interfaces";
+import { useSelector } from "react-redux";
+import { IPlayerColourMap, IPlayerRole, IPlayerState } from "../../interfaces/Interfaces";
 import { endTurn, getFirstPlayer, getGameWord, getRole } from "../../utils/serverUtils";
 import Actions from "../../redux/actions/Actions";
 import { useDispatch } from "react-redux";
 import Canvas from "../canvas/Canvas";
 import InfoPanel from "./InfoPanel";
 import Timer from "./Timer";
+import GameEnd from "./GameEnd";
 
 const DEFAULT_ROLE = "Friend";
 
@@ -17,22 +18,45 @@ const EXTRA_ROLES: IPlayerRole[] = [
   }
 ]
 
-const GAME_TIME = 300;
+interface IGameState {
+  time: number,
+  roomCode: string,
+  word: string,
+  playerName: string,
+  possibleRoles: IPlayerRole[],
+  players: string[],
+  activePlayer: string,
+  guessingPlayer: string,
+  role: string,
+  playerColourMap: IPlayerColourMap,
+  gameEnded: boolean,
+  guessedSpy: boolean,
+  spy: string,
+}
 
 function Game() {
 	const dispatch = useDispatch();
 
-	const roomCode = useSelector<IPlayerState>(state => state.room) as string;
-	const playerName = useSelector<IPlayerState>(state => state.name) as string;
-	const possibleRoles = useSelector<IPlayerState>(state => state.possibleRoles) as IPlayerRole[];
-	const players = useSelector<IPlayerState>(state => state.players) as string[];
-	const activePlayer = useSelector<IPlayerState>(state => state.activePlayer) as string;
-	const guessingPlayer = useSelector<IPlayerState>(state => state.guessingPlayer) as string;
-	useSelector<IPlayerState>(state => state.role) as string;
+  const gameState = useSelector<IPlayerState>(state => (
+    {
+      time: state.time,
+      roomCode: state.room,
+      word: state.gameWord,
+      playerName: state.name,
+      possibleRoles: state.possibleRoles,
+      players: state.players,
+      activePlayer: state.activePlayer,
+      guessingPlayer: state.guessingPlayer,
+      role: state.role,
+      gameEnded: state.gameEnded,
+      guessedSpy: state.guessedSpy,
+      spy: state.spy,
+    }
+  )) as IGameState;
 
 	useEffect(() => {
-		if (possibleRoles.length === 0) {
-			const playerCount = Object.keys(players).length;
+		if (gameState.possibleRoles.length === 0) {
+			const playerCount = Object.keys(gameState.players).length;
 			let totalExtraRoles = 0;
 			for (const role of EXTRA_ROLES) {
 				totalExtraRoles += role.roleCount;
@@ -43,30 +67,29 @@ function Game() {
 			}
 			const allRoles = EXTRA_ROLES.concat(defaultRole);
 			dispatch(Actions.setPossibleRoles(allRoles));
-			getRole(roomCode, playerName, allRoles);
-			getGameWord(roomCode, playerName);
-      getFirstPlayer(roomCode);
+			getRole(gameState.roomCode, gameState.playerName, allRoles);
+			getGameWord(gameState.roomCode, gameState.playerName);
+      getFirstPlayer(gameState.roomCode);
 		}
   });
 
   const isActivePlayer = () => {
-    return playerName === activePlayer;
+    return gameState.playerName === gameState.activePlayer;
   }
 
 	const onEndStroke = () => {
-		endTurn(roomCode);
+		endTurn(gameState.roomCode);
 	}
 
 	return (
-		<ReactReduxContext.Consumer>
-			{({ store }) => {
-				const state = store.getState() as IPlayerState;
-				return (
-					<>
-            <Timer
-              startingSeconds={GAME_TIME}
-              onTimerEnd={() => console.log("HIII")}
-            />
+		<>
+      <Timer
+        startingSeconds={gameState.time}
+        gameEnded={gameState.gameEnded}
+      />
+      {
+        !gameState.gameEnded ?
+          <>
             {
               isActivePlayer() ?
                 <p>
@@ -74,36 +97,43 @@ function Game() {
                 </p>
               :
                 <p>
-                  {activePlayer}'s turn'!
+                  {gameState.activePlayer}'s turn'!
                 </p>
             }
-						{
-							!!state.role ?
-								<>
-									<InfoPanel
-										room={state.room}
-                    name={state.name}
-										role={state.role}
-										word={state.gameWord}
-                    playerNames={state.players}
-                    guessingPlayer={guessingPlayer}
-                    playerColourMap={state.playerColourMap}
-									/>
-									<Canvas
+      			{
+      				!!gameState.role ?
+      					<>
+      						<InfoPanel
+      							room={gameState.roomCode}
+                    name={gameState.playerName}
+      							role={gameState.role}
+      							word={gameState.word}
+                    playerNames={gameState.players}
+                    guessingPlayer={gameState.guessingPlayer}
+                    playerColourMap={gameState.playerColourMap}
+      						/>
+      						<Canvas
                     canDraw={isActivePlayer()}
                     showPalette={false}
-										onEndStroke={() => onEndStroke()}
+      							onEndStroke={() => onEndStroke()}
                   />
-								</>
-							:
-								<div>
-									Assigning roles...
-								</div>
-						}
-					</>
-				);
-			}}
-		</ReactReduxContext.Consumer>
+      					</>
+      				:
+      					<div>
+      						Assigning roles...
+      					</div>
+      			}
+          </>
+        :
+          <>
+            <GameEnd
+              guessedSpy={gameState.guessedSpy}
+              spy={gameState.spy}
+              playerName={gameState.playerName}
+            />
+          </>
+      }
+		</>
 	);
 }
 

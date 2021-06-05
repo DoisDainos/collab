@@ -18,13 +18,14 @@ function Room() {
   return (
     <ReactReduxContext.Consumer>
       {({ store }) => {
-        if (location.pathname !== "game" && store.getState().playing) {
+        const state = store.getState();
+        if (location.pathname !== "game" && state.playing) {
           history.push("/game");
         }
         return (
           <div className={ClassName.container}>
             <p>
-              Room: { store.getState().room }
+              Room: { state.room }
             </p>
             <PlayerList />
             <ColourPicker />
@@ -32,7 +33,7 @@ function Room() {
               variant="contained"
               color="primary"
               onClick={() => {
-                startRoomGame(store.getState().room);
+                startRoomGame(state.room);
               }}
               fullWidth={true}
               style={{ fontSize: "calc(10px + 2vmin)" }}

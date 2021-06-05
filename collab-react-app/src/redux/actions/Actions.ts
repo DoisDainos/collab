@@ -54,6 +54,13 @@ const Actions = {
     }
   },
 
+  setTime: (time: number) => {
+    return {
+      type: ActionTypes.SET_TIME,
+      payload: time
+    }
+  },
+
   addLines: (lines: ILineFromPlayer[]) => {
     return {
       type: ActionTypes.ADD_LINES,
@@ -98,6 +105,13 @@ const Actions = {
     return {
       type: ActionTypes.SET_CORRECT_GUESS,
       payload: correct
+    }
+  },
+
+  endGame: (spy: string) => {
+    return {
+      type: ActionTypes.END_GAME,
+      payload: spy
     }
   }
 }

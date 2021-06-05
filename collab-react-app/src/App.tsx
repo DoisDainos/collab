@@ -46,9 +46,10 @@ const App = () => {
         dispatch(Actions.setPlayers(message.content.players));
         break;
       case "SetPlayerColour":
-        dispatch(Actions.setPlayerColour(message.content.playerName, message.content.colour));
+        dispatch(Actions.setPlayerColour(message.content.name, message.content.colour));
         break;
       case "StartGame":
+        dispatch(Actions.setTime(message.content.time));
         dispatch(Actions.setPlaying(true));
         break;
       case "GetRole":
@@ -65,7 +66,7 @@ const App = () => {
             startY: line.startY,
             endX: line.endX,
             endY: line.endY,
-            playerName: message.content.playerName as string,
+            playerName: message.content.name as string,
           })
         }
         dispatch(Actions.addLines(linesFromPlayer));
@@ -75,13 +76,16 @@ const App = () => {
         dispatch(Actions.setActivePlayer(message.content.activePlayer));
         break;
       case "StartGuess":
-        dispatch(Actions.startGuess(message.content.playerName));
+        dispatch(Actions.startGuess(message.content.name));
         break;
       case "EndGuess":
         dispatch(Actions.endGuess());
         break;
       case "SubmitGuess":
         dispatch(Actions.submitGuess(message.content.correct));
+        break;
+      case "EndGame":
+        dispatch(Actions.endGame(message.content.spy));
         break;
       default:
         break;

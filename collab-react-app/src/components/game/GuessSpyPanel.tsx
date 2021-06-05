@@ -43,7 +43,7 @@ function GuessSpyPanel(props: IProps) {
                     onClick={() => onSubmit(name)}
                     key={index}
                     style={{
-                      backgroundColor: props.playerColourMap[name],
+                      backgroundColor: props.playerColourMap ? props.playerColourMap[name] : "black",
                       color: "#fff"
                     }}
                   >

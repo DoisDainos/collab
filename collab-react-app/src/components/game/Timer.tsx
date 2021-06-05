@@ -3,7 +3,7 @@ import "../../styles/styles.css"
 
 interface IProps {
 	startingSeconds: number,
-  onTimerEnd: () => void,
+  gameEnded: boolean,
 }
 
 const ClassName = "container-infoPanel";
@@ -12,9 +12,7 @@ function Timer(props: IProps) {
   const [ timerSeconds, setTimerSeconds ] = useState<number>(props.startingSeconds);
 
   useEffect(() => {
-    if (timerSeconds === 0) {
-      props.onTimerEnd();
-    } else {
+    if (timerSeconds > 0 && !props.gameEnded) {
       setTimeout(() => {
         setTimerSeconds(timerSeconds - 1);
       }, 1000);

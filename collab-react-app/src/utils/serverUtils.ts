@@ -33,7 +33,7 @@ export function submitRoomCode(code: string, player: string) {
 }
 
 export function setPlayerColour(code: string, playerName: string, colour: string) {
-	const content = { code: code, playerName: playerName, colour: colour };
+	const content = { code: code, name: playerName, colour: colour };
 	socket.send(JSON.stringify({ type: "SetPlayerColour", content: JSON.stringify(content) }));
 }
 
@@ -48,12 +48,12 @@ export function submitLines(code: string, player: string, lines: ILine[], stroke
 }
 
 export function getRole(code: string, player: string, possibleRoles: IPlayerRole[]) {
-	const content = { code: code, playerName: player, possibleRoles: possibleRoles };
+	const content = { code: code, name: player, possibleRoles: possibleRoles };
 	socket.send(JSON.stringify({ type: "GetRole", content: JSON.stringify(content) }));
 }
 
 export function getGameWord(code: string, playerName: string) {
-	const content = { code: code, playerName: playerName };
+	const content = { code: code, name: playerName };
 	socket.send(JSON.stringify({ type: "GetWord", content: JSON.stringify(content) }));
 }
 
@@ -68,7 +68,7 @@ export function endTurn(code: string) {
 }
 
 export function startGuess(code: string, playerName: string) {
-	const content = { code: code, playerName: playerName };
+	const content = { code: code, name: playerName };
 	socket.send(JSON.stringify({ type: "StartGuess", content: JSON.stringify(content) }));
 }
 

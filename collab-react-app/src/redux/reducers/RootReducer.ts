@@ -17,7 +17,11 @@ const initialState: Interfaces.IPlayerState = {
   role: "",
   possibleRoles: [],
   gameWord: "",
-  guessingPlayer: ""
+  guessingPlayer: "",
+  time: -1,
+  guessedSpy: false,
+  gameEnded: false,
+  spy: "",
 };
 
 const RootReducer: IReducerFunction = (state = initialState, action) => {
@@ -68,6 +72,12 @@ const RootReducer: IReducerFunction = (state = initialState, action) => {
 				...state,
 				playing: playing
 			};
+    case ActionTypes.SET_TIME:
+      const time = action.payload as number;
+      return {
+        ...state,
+        time: time
+      }
     case ActionTypes.ADD_LINES:
       const lines = action.payload as Interfaces.ILineFromPlayer[];
       return {
@@ -94,10 +104,17 @@ const RootReducer: IReducerFunction = (state = initialState, action) => {
         guessingPlayer: isGuessing ? guessingPlayer : ""
       }
     case ActionTypes.SET_CORRECT_GUESS:
-      // const correct = action.payload as boolean;
-      console.log("Correct: " + action.payload);
+      const guessedSpy = action.payload as boolean;
       return {
-        ...state
+        ...state,
+        guessedSpy: guessedSpy
+      }
+    case ActionTypes.END_GAME:
+      const spy = action.payload as string;
+      return {
+        ...state,
+        gameEnded: true,
+        spy: spy
       }
     default:
       return state;

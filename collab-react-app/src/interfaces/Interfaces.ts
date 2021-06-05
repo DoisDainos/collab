@@ -24,6 +24,14 @@ export interface IPlayerState {
 	gameWord: string;
 	// Name of player currently making a spy guess
 	guessingPlayer: string;
+	// Game time in seconds, server keeps actual count
+	time: number;
+	// Spy has been found out
+	guessedSpy: boolean;
+	// Game has ended by time
+	gameEnded: boolean;
+	// The spy of the game, once revealed
+	spy: string;
 }
 
 export interface IPlayerColourMap {
