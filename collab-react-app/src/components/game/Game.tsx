@@ -6,8 +6,7 @@ import Actions from "../../redux/actions/Actions";
 import { useDispatch } from "react-redux";
 import Canvas from "../canvas/Canvas";
 import InfoPanel from "./InfoPanel";
-
-// const ROUNDS = 6;
+import Timer from "./Timer";
 
 const DEFAULT_ROLE = "Friend";
 
@@ -17,6 +16,8 @@ const EXTRA_ROLES: IPlayerRole[] = [
     roleCount: 1
   }
 ]
+
+const GAME_TIME = 300;
 
 function Game() {
 	const dispatch = useDispatch();
@@ -62,6 +63,10 @@ function Game() {
 				const state = store.getState() as IPlayerState;
 				return (
 					<>
+            <Timer
+              startingSeconds={GAME_TIME}
+              onTimerEnd={() => console.log("HIII")}
+            />
             {
               isActivePlayer() ?
                 <p>
