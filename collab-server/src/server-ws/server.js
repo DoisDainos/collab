@@ -4,10 +4,10 @@ const WebSocket = require('ws');
 const port = 8081;
 const wss = new WebSocket.Server({ port: 8081 });
 
-// { [CODE]: { players: [{ name: string, role: string, socket: WebSocket, position: number, colour: string }], game: { word: string, lines: Line[], currentPlayerPosition: number, time: number, intervalId: number } } }
+// { [CODE]: { players: [{ name: string, role: string, socket: WebSocket, position: number, colour: string }], game: { word: string, lines: Line[], currentPlayerPosition: number, time: number, intervalId: number, guessingPlayer: string } } }
 const roomStateMap = {};
 
-const GAME_TIME = 10;
+const GAME_TIME = 300;
 
 wss.on('connection', ws => {
   console.log(`Connected on port ${port}`)
@@ -71,6 +71,11 @@ wss.on('connection', ws => {
         case 'SubmitGuess':
           // data: { code: string, guessedName: string }
           handleSubmitGuess(data);
+          break;
+
+        case 'GetState':
+          // data: { name: string, code: string }
+          handleGetState(ws, data);
           break;
 
         default:
@@ -262,6 +267,7 @@ function handleEndTurn(data) {
 function handleStartGuess(data) {
   console.log(`Guess has been started for room ${data.code} by ${data.name}`);
   const room = roomStateMap[data.code];
+  room.game.guessingPlayer = data.name;
   for (const player of room.players) {
     player.socket.send(JSON.stringify({ type: 'StartGuess', content: { name: data.name } }));
   }
@@ -270,6 +276,7 @@ function handleStartGuess(data) {
 function handleEndGuess(data) {
   console.log(`Guess ended for room ${data.code}`);
   const room = roomStateMap[data.code];
+  room.game.guessingPlayer = '';
   for (const player of room.players) {
     player.socket.send(JSON.stringify({ type: 'EndGuess', content: {} }));
   }
@@ -308,4 +315,45 @@ function handleEndGame(code) {
   for (const player of roomStateMap[code].players) {
     player.socket.send(JSON.stringify({ type: 'EndGame', content: { spy: spy } }));
   }
+}
+
+function handleGetState(ws, data) {
+  console.log(`${data.name} has requested the game state for ${data.code}`);
+  const room = roomStateMap[data.code];
+  const players = [];
+  const playerColourMap = {};
+  let activePlayer = '';
+  let role = '';
+  for (const player of room.players) {
+    players.push(player.name);
+    if (player.colour) {
+      playerColourMap[player.name] = player.colour;
+    }
+    if (player.position === room.game.currentPlayerPosition) {
+      activePlayer = player.name;
+    }
+    if (player.name === data.name) {
+      role = player.role;
+    }
+  }
+  ws.send(JSON.stringify(
+    {
+      type: 'GetState',
+      content: {
+        state: {
+          room: data.code,
+          name: data.name,
+          players: players,
+          playerColourMap: playerColourMap,
+          activePlayer: activePlayer,
+          canvasLines: room.game.lines,
+          role: role,
+          gameWord: role !== 'Spy' ? room.game.word : '',
+          guessingPlayer: room.game.guessingPlayer,
+          time: room.game.time,
+          // TODO: guessedSpy: boolean, gameEnded: boolean, spy: string
+        }
+      }
+    }
+  ));
 }

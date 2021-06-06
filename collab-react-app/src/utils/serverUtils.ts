@@ -82,6 +82,11 @@ export function submitGuess(code: string, guessedName: string) {
 	socket.send(JSON.stringify({ type: "SubmitGuess", content: JSON.stringify(content) }));
 }
 
+export function getState(code: string, playerName: string) {
+	const content = { code: code, name: playerName };
+	socket.send(JSON.stringify({ type: "GetState", content: JSON.stringify(content) }));
+}
+
 export function listenForMessage(callback: (data: IServerMessage) => void) {
 	socket.addEventListener("message", event => {
 		if (event.data) {

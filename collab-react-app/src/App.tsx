@@ -87,6 +87,9 @@ const App = () => {
       case "EndGame":
         dispatch(Actions.endGame(message.content.spy));
         break;
+      case "GetState":
+        dispatch(Actions.setState(message.content.state));
+        break;
       default:
         break;
     }

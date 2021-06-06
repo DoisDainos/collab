@@ -1,5 +1,5 @@
 import * as ActionTypes from "./ActionTypes";
-import { ILineFromPlayer, IPlayerRole } from "../../interfaces/Interfaces";
+import { ILineFromPlayer, IPlayerRole, IPlayerState } from "../../interfaces/Interfaces";
 
 const Actions = {
   setRoom: (room: string) => {
@@ -112,6 +112,13 @@ const Actions = {
     return {
       type: ActionTypes.END_GAME,
       payload: spy
+    }
+  },
+
+  setState: (state: Partial<IPlayerState>) => {
+    return {
+      type: ActionTypes.SET_STATE,
+      payload: state
     }
   }
 }

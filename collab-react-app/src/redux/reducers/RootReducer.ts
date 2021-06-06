@@ -116,6 +116,12 @@ const RootReducer: IReducerFunction = (state = initialState, action) => {
         gameEnded: true,
         spy: spy
       }
+    case ActionTypes.SET_STATE:
+      const partialState = action.payload as Partial<Interfaces.IPlayerState>;
+      return {
+        ...state,
+        ...partialState
+      }
     default:
       return state;
   }

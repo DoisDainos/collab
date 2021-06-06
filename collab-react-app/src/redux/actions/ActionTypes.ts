@@ -13,3 +13,4 @@ export const SET_GAME_WORD = "SET_GAME_WORD";
 export const SET_GUESSING = "SET_GUESSING";
 export const SET_CORRECT_GUESS = "SET_CORRECT_GUESS";
 export const END_GAME = "END_GAME";
+export const SET_STATE = "SET_STATE";

@@ -1,13 +1,14 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { IPlayerColourMap, IPlayerRole, IPlayerState } from "../../interfaces/Interfaces";
-import { endTurn, getFirstPlayer, getGameWord, getRole } from "../../utils/serverUtils";
+import { endTurn, getFirstPlayer, getGameWord, getRole, getState } from "../../utils/serverUtils";
 import Actions from "../../redux/actions/Actions";
 import { useDispatch } from "react-redux";
 import Canvas from "../canvas/Canvas";
 import InfoPanel from "./InfoPanel";
 import Timer from "./Timer";
 import GameEnd from "./GameEnd";
+import * as SessionStorageUtils from "../../utils/sessionStorageUtils";
 
 const DEFAULT_ROLE = "Friend";
 
@@ -32,6 +33,7 @@ interface IGameState {
   gameEnded: boolean,
   guessedSpy: boolean,
   spy: string,
+  playing: boolean,
 }
 
 function Game() {
@@ -51,11 +53,18 @@ function Game() {
       gameEnded: state.gameEnded,
       guessedSpy: state.guessedSpy,
       spy: state.spy,
+      playing: state.playing,
     }
   )) as IGameState;
 
 	useEffect(() => {
 		if (gameState.possibleRoles.length === 0) {
+      if (gameState.playerName && gameState.roomCode) {
+        SessionStorageUtils.setPlayerInfo({
+          name: gameState.playerName,
+          room: gameState.roomCode
+        })
+      }
 			const playerCount = Object.keys(gameState.players).length;
 			let totalExtraRoles = 0;
 			for (const role of EXTRA_ROLES) {
@@ -67,9 +76,15 @@ function Game() {
 			}
 			const allRoles = EXTRA_ROLES.concat(defaultRole);
 			dispatch(Actions.setPossibleRoles(allRoles));
-			getRole(gameState.roomCode, gameState.playerName, allRoles);
-			getGameWord(gameState.roomCode, gameState.playerName);
-      getFirstPlayer(gameState.roomCode);
+      if (gameState.playing) {
+  			getRole(gameState.roomCode, gameState.playerName, allRoles);
+  			getGameWord(gameState.roomCode, gameState.playerName);
+        getFirstPlayer(gameState.roomCode);
+      } else {
+        const info = SessionStorageUtils.getPlayerInfo();
+        getState(info.room, info.name);
+        dispatch(Actions.setPlaying(true));
+      }
 		}
   });
 
