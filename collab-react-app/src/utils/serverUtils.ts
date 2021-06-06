@@ -2,7 +2,7 @@ import { ILine, IPlayerRole, IServerMessage } from "../interfaces/Interfaces";
 
 const ip = "172.16.11.176";
 const port = "8081";
-const protocol = window.location.protocol === "https" ? "wss" : "ws";
+const protocol = window.location.protocol === "https:" ? "wss" : "ws";
 const socket = new WebSocket(`${protocol}://${ip}:${port}`);
 
 export async function parseTextResponse(response: Response): Promise<string> {
