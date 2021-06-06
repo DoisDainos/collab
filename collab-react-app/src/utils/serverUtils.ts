@@ -1,6 +1,6 @@
 import { ILine, IPlayerRole, IServerMessage } from "../interfaces/Interfaces";
 
-const socket = new WebSocket("ws://localhost:8081");
+const socket = new WebSocket("ws://172.16.11.176:8081");
 
 export async function parseTextResponse(response: Response): Promise<string> {
 	if (response.body) {
