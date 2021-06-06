@@ -1,8 +1,8 @@
 const utils = require('../server-common/utils');
 const WebSocket = require('ws');
 
-const port = 8081;
-const wss = new WebSocket.Server({ port: 8081 });
+const port = 443;
+const wss = new WebSocket.Server({ port: port });
 
 // { [CODE]: { players: [{ name: string, role: string, socket: WebSocket, position: number, colour: string }], game: { word: string, lines: Line[], currentPlayerPosition: number, time: number, intervalId: number, guessingPlayer: string } } }
 const roomStateMap = {};
