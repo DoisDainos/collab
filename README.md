@@ -1,3 +1,5 @@
+# [spydraw.com](https://www.spydraw.com)
+
 # Starting the app locally
 
 In folder collab-react-app:
@@ -6,7 +8,7 @@ In folder collab-react-app:
 
 In folder collab-server
 - npm install
-- node src/server-ws/server.js
+- non start
 
 Visit localhost:3000
 
