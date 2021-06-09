@@ -1,6 +1,9 @@
 import { ILine, IPlayerRole, IServerMessage } from "../interfaces/Interfaces";
 
-const socket = new WebSocket("wss://spydraw-server-5bao3jqrpa-ts.a.run.app:8081");
+const url = window.location.protocol === "https:" ?
+	"wss://spydraw-server-5bao3jqrpa-ts.a.run.app" :
+	"ws://localhost:8081"
+const socket = new WebSocket(url);
 
 export async function parseTextResponse(response: Response): Promise<string> {
 	if (response.body) {
