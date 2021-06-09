@@ -16,6 +16,9 @@ const RoomConnect = () => {
   const [code, setCode] = useState("");
   const [name, setName] = useState("");
 
+  const [nameError, setNameError] = useState(false);
+  const [roomCodeError, setRoomCodeError] = useState(false);
+
   const history = useHistory();
 
   // const iconPath = process.env.PUBLIC_URL + "/assets/";
@@ -24,10 +27,16 @@ const RoomConnect = () => {
     <div className={ClassName.container}>
       <div>
         <TextField
+          error={nameError}
           value={name}
           color="primary"
           placeholder="Enter player name"
-          onChange={event => setName(event.target.value)}
+          onChange={event => {
+            setName(event.target.value);
+            if (nameError) {
+              setNameError(false);
+            }
+          }}
           fullWidth={true}
           inputProps={{
             style: { fontSize: "calc(10px + 2vmin)" }
@@ -39,10 +48,16 @@ const RoomConnect = () => {
       </p>
       <div>
         <TextField
+          error={roomCodeError}
           value={code}
           color="primary"
           placeholder="Enter room code"
-          onChange={event => setCode(event.target.value)}
+          onChange={event => {
+            setCode(event.target.value);
+            if (roomCodeError) {
+              setRoomCodeError(false);
+            }
+          }}
           fullWidth={true}
           inputProps={{
             style: { fontSize: "calc(10px + 2vmin)" }
@@ -54,11 +69,23 @@ const RoomConnect = () => {
           variant="contained"
           color="primary"
           onClick={() => {
-            dispatch(Actions.setPlayers([ name ]));
-            dispatch(Actions.setName(name));
-            dispatch(Actions.setRoom(code));
-            submitRoomCode(code, name);
-            history.push("/room");
+            if (!name) {
+              setNameError(true);
+            } else {
+              setNameError(false);
+            }
+            if (!code) {
+              setRoomCodeError(true);
+            } else {
+              setRoomCodeError(false);
+            }
+            if (name && code) {
+              dispatch(Actions.setPlayers([ name ]));
+              dispatch(Actions.setName(name));
+              dispatch(Actions.setRoom(code));
+              submitRoomCode(code, name);
+              history.push("/room");
+            }
           }}
           fullWidth={true}
           style={{ fontSize: "calc(10px + 2vmin)" }}
@@ -74,9 +101,15 @@ const RoomConnect = () => {
           variant="contained"
           color="primary"
           onClick={ () => {
-            generateRoomCode(name);
-            dispatch(Actions.setName(name));
-            history.push("/room");
+            setRoomCodeError(false);
+            if (!name) {
+              setNameError(true);
+            } else {
+              setNameError(false);
+              generateRoomCode(name);
+              dispatch(Actions.setName(name));
+              history.push("/room");
+            }
           }}
           fullWidth={true}
           style={{ fontSize: "calc(10px + 2vmin)" }}

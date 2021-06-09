@@ -9,9 +9,15 @@ import "./App.css";
 import { IServerMessage, ILine, ILineFromPlayer } from "./interfaces/Interfaces";
 import { listenForMessage, pingServer } from "./utils/serverUtils";
 
+enum ConnectState {
+  LOADING,
+  CONNECTED,
+  FAILED
+}
+
 const App = () => {
   const dispatch = useDispatch();
-  const [ connected, setConnected ] = useState<boolean>(false);
+  const [ connected, setConnected ] = useState<ConnectState>(ConnectState.LOADING);
 
   useEffect(() => {
     const attemptConnection = async () => {
@@ -23,9 +29,13 @@ const App = () => {
       }
       if (success) {
         listenForMessage(handleServerMessage);
-      }
-      if (success !== connected) {
-        setConnected(success);
+        if (connected !== ConnectState.CONNECTED) {
+          setConnected(ConnectState.CONNECTED);
+        }
+      } else {
+        if (connected !== ConnectState.FAILED) {
+          setConnected(ConnectState.FAILED);
+        }
       }
     }
     attemptConnection();
@@ -95,7 +105,7 @@ const App = () => {
     }
   }
 
-  if (!connected) {
+  if (connected === ConnectState.FAILED) {
     return (
       <div className="App">
         <p>Failed to connect to server</p>
