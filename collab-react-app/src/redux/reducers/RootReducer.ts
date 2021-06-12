@@ -22,6 +22,7 @@ const initialState: Interfaces.IPlayerState = {
   guessedSpy: false,
   gameEnded: false,
   spy: "",
+  invalidRoom: false,
 };
 
 const RootReducer: IReducerFunction = (state = initialState, action) => {
@@ -43,6 +44,12 @@ const RootReducer: IReducerFunction = (state = initialState, action) => {
       return {
 				...state,
 				players: names
+			};
+    case ActionTypes.SET_INVALID_ROOM:
+			const invalid = action.payload as boolean;
+      return {
+				...state,
+				invalidRoom: invalid
 			};
     case ActionTypes.SET_PLAYER_COLOUR:
 			const playerName = (action.payload as Interfaces.IPlayerColourAction).playerName;

@@ -1,6 +1,7 @@
 export const SET_ROOM = "SET_ROOM";
 export const SET_NAME = "SET_NAME";
 export const ADD_PLAYER = "ADD_PLAYER";
+export const SET_INVALID_ROOM = "SET_INVALID_ROOM";
 export const SET_PLAYER_COLOUR = "SET_PLAYER_COLOUR";
 export const SET_POSSIBLE_ROLES = "SET_POSSIBLE_ROLES";
 export const SET_ROLE = "SET_ROLE";

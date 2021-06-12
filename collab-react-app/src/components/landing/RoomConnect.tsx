@@ -1,10 +1,12 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import { useHistory } from "react-router-dom";
 import Actions from "../../redux/actions/Actions";
 import { submitRoomCode, generateRoomCode } from "../../utils/serverUtils";
+import { IPlayerState } from "../../interfaces/Interfaces";
+import InvalidRoomModal from "./InvalidRoomModal";
 
 const ClassName = {
   container: "container-roomConnect",
@@ -19,12 +21,30 @@ const RoomConnect = () => {
   const [nameError, setNameError] = useState(false);
   const [roomCodeError, setRoomCodeError] = useState(false);
 
+  const invalidRoom = useSelector<IPlayerState>(state => state.invalidRoom) as boolean;
+  const players = useSelector<IPlayerState>(state => state.players) as string[];
+
   const history = useHistory();
 
   // const iconPath = process.env.PUBLIC_URL + "/assets/";
 
+  useEffect(() => {
+    if (!invalidRoom && players.length > 0) {
+      dispatch(Actions.setName(name));
+      dispatch(Actions.setRoom(code));
+      history.push("/room");
+    }
+  }, [invalidRoom, players]);
+
   return (
     <div className={ClassName.container}>
+      <InvalidRoomModal
+        room={code}
+        open={invalidRoom}
+        onClose={() => {
+          dispatch(Actions.setInvalidRoomCode(false));
+        }}
+      />
       <div>
         <TextField
           error={nameError}
@@ -80,11 +100,7 @@ const RoomConnect = () => {
               setRoomCodeError(false);
             }
             if (name && code) {
-              dispatch(Actions.setPlayers([ name ]));
-              dispatch(Actions.setName(name));
-              dispatch(Actions.setRoom(code));
               submitRoomCode(code, name);
-              history.push("/room");
             }
           }}
           fullWidth={true}

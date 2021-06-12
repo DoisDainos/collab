@@ -32,6 +32,8 @@ export interface IPlayerState {
 	gameEnded: boolean;
 	// The spy of the game, once revealed
 	spy: string;
+	// True if provided room code doesn't exist or is otherwise invalid
+	invalidRoom: boolean;
 }
 
 export interface IPlayerColourMap {

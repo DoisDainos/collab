@@ -23,6 +23,13 @@ const Actions = {
     }
   },
 
+  setInvalidRoomCode: (invalid: boolean) => {
+    return {
+      type: ActionTypes.SET_INVALID_ROOM,
+      payload: invalid
+    }
+  },
+
   setPlayerColour: (playerName: string, colour: string) => {
     return {
       type: ActionTypes.SET_PLAYER_COLOUR,

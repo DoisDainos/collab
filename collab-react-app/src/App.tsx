@@ -53,7 +53,11 @@ const App = () => {
         dispatch(Actions.setRoom(code));
         break;
       case "ConnectRoom":
-        dispatch(Actions.setPlayers(message.content.players));
+        if (message.content.invalid) {
+          dispatch(Actions.setInvalidRoomCode(true));
+        } else {
+          dispatch(Actions.setPlayers(message.content.players));
+        }
         break;
       case "SetPlayerColour":
         dispatch(Actions.setPlayerColour(message.content.name, message.content.colour));

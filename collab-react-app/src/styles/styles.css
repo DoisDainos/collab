@@ -59,4 +59,21 @@
   height: 200px;
   width: 300px;
   padding: 20px;
+
+  display: inline-block;
+}
+
+.modal-invalid-content {
+  position: absolute;
+}
+
+.modal-invalid-button {
+  position: absolute;
+  top: 90%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 }

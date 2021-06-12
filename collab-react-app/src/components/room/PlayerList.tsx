@@ -34,8 +34,8 @@ const PlayerList = () => {
                 state.players.map((name: string, index: number) => {
                   if (state.name !== name) {
                     return (
-                      <>
-                        <div className={ClassName.row} key={ index }>
+                      <div key={index}>
+                        <div className={ClassName.row}>
                           <p>{ name }</p>
                           {
                             !!state.playerColourMap[name] &&
@@ -45,7 +45,7 @@ const PlayerList = () => {
                               />
                           }
                         </div>
-                      </>
+                      </div>
                     );
                   }
                 })
