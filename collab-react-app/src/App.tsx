@@ -7,7 +7,8 @@ import Game from "./components/game/Game";
 import Actions from "./redux/actions/Actions";
 import "./App.css";
 import { IServerMessage, ILine, ILineFromPlayer } from "./interfaces/Interfaces";
-import { listenForMessage, pingServer } from "./utils/serverUtils";
+import { listenForMessage, getState, pingServer } from "./utils/serverUtils";
+import * as SessionStorageUtils from "./utils/sessionStorageUtils";
 
 enum ConnectState {
   LOADING,
@@ -29,6 +30,10 @@ const App = () => {
       }
       if (success) {
         listenForMessage(handleServerMessage);
+        const info = SessionStorageUtils.getPlayerInfo();
+        if (info) {
+          getState(info.room, info.name);
+        }
         if (connected !== ConnectState.CONNECTED) {
           setConnected(ConnectState.CONNECTED);
         }

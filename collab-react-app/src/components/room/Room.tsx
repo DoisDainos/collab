@@ -1,11 +1,12 @@
-import React from "react";
-import { ReactReduxContext, connect } from "react-redux";
+import React, { useEffect } from "react";
+import { ReactReduxContext, connect, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import PlayerList from "./PlayerList";
 import ColourPicker from "./ColourPicker";
 import { startRoomGame } from "../../utils/serverUtils";
 import { IPlayerState } from "../../interfaces/Interfaces";
+import * as SessionStorageUtils from "../../utils/sessionStorageUtils";
 
 const ClassName = {
   container: "container-room",
@@ -14,6 +15,17 @@ const ClassName = {
 function Room() {
   const history = useHistory();
   const location = useLocation();
+  const room = useSelector<IPlayerState>(state => state.room) as string;
+  const name = useSelector<IPlayerState>(state => state.name) as string;
+
+  useEffect(() => {
+    if (name && room) {
+      SessionStorageUtils.setPlayerInfo({
+        name: name,
+        room: room
+      });
+    }
+  }, []);
 
   return (
     <ReactReduxContext.Consumer>

@@ -24,23 +24,55 @@
 
 .palette-colourPicker {
   margin-top: calc(10px + 2vmin);
-  display: flex;
-  justify-content: space-evenly;
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: repeat(4, 1fr);
+  height: 150px;
+  width: 200px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.item-colourPicker {
-  width: calc(30px + 2vmin);
-  height: calc(30px + 2vmin);
+.item-colourPicker, .item-playerList {
+  border-radius: 100%;
+}
+
+.item-colourPicker.unavailable {
+  filter: saturate(0.5);
+  opacity: 0.2;
 }
 
 .item-playerList {
-  width: calc(30px + 2vmin);
-  height: calc(30px + 2vmin);
+  width: calc(20px + 2vmin);
+  height: calc(20px + 2vmin);
+  position: absolute;
+  right: 0;
+  top: 50%;
+
+  -webkit-transform: translate(0, -50%);
+  -moz-transform: translate(0, -50%);
+  -ms-transform: translate(0, -50%);
+  -o-transform: translate(0, -50%);
+  transform: translate(0, -50%);
+}
+
+.name-playerList {
+  position: absolute;
+  left: 0;
+  top: 50%;
+
+  -webkit-transform: translate(0, -50%);
+  -moz-transform: translate(0, -50%);
+  -ms-transform: translate(0, -50%);
+  -o-transform: translate(0, -50%);
+  transform: translate(0, -50%);
 }
 
 .row-playerList {
-  display: flex;
-  justify-content: space-evenly;
+  height: calc(30px + 2vmin);
+  width: 200px;
+  position: relative;
+  margin: auto;
 }
 
 .modal-body {

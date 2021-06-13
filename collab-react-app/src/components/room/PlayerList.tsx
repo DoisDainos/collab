@@ -5,7 +5,8 @@ import { IPlayerState } from "../../interfaces/Interfaces";
 
 const ClassName = {
   item: "item-playerList",
-  row: "row-playerList"
+  row: "row-playerList",
+  name: "name-playerList"
 }
 
 const PlayerList = () => {
@@ -16,7 +17,7 @@ const PlayerList = () => {
         return (
           <>
             <div className={ClassName.row}>
-              <div>
+              <div className={ClassName.name}>
                 {
                   state.name
                 }
@@ -36,7 +37,7 @@ const PlayerList = () => {
                     return (
                       <div key={index}>
                         <div className={ClassName.row}>
-                          <p>{ name }</p>
+                          <div className={ClassName.name}>{ name }</div>
                           {
                             !!state.playerColourMap[name] &&
                               <div

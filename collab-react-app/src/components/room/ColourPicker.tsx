@@ -8,15 +8,22 @@ const ClassName = {
   container: "container-colourPicker",
   item: "item-colourPicker",
   palette: "palette-colourPicker",
+  unavailable: "unavailable",
 }
 
 const colours = [
-  "green",
-  "blue",
-  "red",
-  "yellow",
-  "orange",
-  "black",
+  "#000075", // Navy
+  "#800000", // Maroon
+  "#0d8a37", // Green
+  "#911eb4", // Purple
+  "#ff0000", // Red
+  "#0000ff", // Blue
+  "#f58231", // Orange
+  "#469990", // Teal
+  "#9A6324", // Brown
+  "#f032e6", // Magenta
+  "#42d4f4", // Cyan
+  "#808000", // Olive
 ]
 
 const ColourPicker = () => {
@@ -25,13 +32,20 @@ const ColourPicker = () => {
 		setPlayerColour(roomCode, playerName, obj.id);
 	}
 
-  const isColourAvailable = (colour: string, playerColourMap: IPlayerColourMap): boolean => {
+  const colourIsAvailable = (colour: string, playerColourMap: IPlayerColourMap): boolean => {
     for (const player in playerColourMap) {
       if (playerColourMap[player] === colour) {
         return false;
       }
     }
     return true;
+  }
+
+  const getItemClassName = (colour: string, playerColourMap: IPlayerColourMap) => {
+    if (colourIsAvailable(colour, playerColourMap)) {
+      return `${ClassName.item}`
+    }
+    return `${ClassName.item} ${ClassName.unavailable}`
   }
 
   return (
@@ -43,17 +57,20 @@ const ColourPicker = () => {
         			<div>Choose Color</div>
               <div className={ClassName.palette}>
                 {
-                  colours.map((colour, index) => {
-                    return isColourAvailable(colour, state.playerColourMap) &&
-              			   <div
-                        onClick={ e => setColour(state.room, state.name, e.target as HTMLDivElement) }
-                        style={{ background: colour }}
-                        id={colour}
-                        key={index}
-                        className={ClassName.item}
-                      >
-                      </div>
-                  })
+                  colours.map((colour, index) => (
+            			   <div
+                      onClick={ e => {
+                        if (colourIsAvailable(colour, state.playerColourMap)) {
+                          setColour(state.room, state.name, e.target as HTMLDivElement)
+                        }
+                      }}
+                      style={{ background: colour }}
+                      id={colour}
+                      key={index}
+                      className={getItemClassName(colour, state.playerColourMap)}
+                    >
+                    </div>
+                  ))
                 }
               </div>
         	</div>

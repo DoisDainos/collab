@@ -9,6 +9,10 @@ export function setPlayerInfo(info: IPlayerSessionInfo): void {
 	sessionStorage.setItem(SessionStorageKey + "player", JSON.stringify(info));
 }
 
-export function getPlayerInfo(): IPlayerSessionInfo {
-  return JSON.parse((sessionStorage.getItem(SessionStorageKey + "player") as string)) as IPlayerSessionInfo;
+export function getPlayerInfo(): IPlayerSessionInfo | undefined {
+  const item = sessionStorage.getItem(SessionStorageKey + "player");
+  if (item) {
+    return JSON.parse(item as string) as IPlayerSessionInfo;
+  }
+  return undefined;
 }

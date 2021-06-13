@@ -17,7 +17,7 @@ function Canvas(props: IProps) {
   const playerColourMap = useSelector<IPlayerState>(state => state.playerColourMap) as IPlayerColourMap;
 	useSelector<IPlayerState>(state => state.role) as string;
 
-	let strokeStyle = "black";
+	let strokeStyle = playerColourMap[playerName];
 	let lineWidth = 2;
 	const line: ILine = {
 		startX: 0,
